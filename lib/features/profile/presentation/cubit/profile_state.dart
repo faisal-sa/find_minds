@@ -9,6 +9,7 @@ class ProfileState extends Equatable {
   final String location;
   final int currentPage;
   final List<String> skills;
+  final List<WorkExperience> experiences;
 
   const ProfileState({
     this.image,
@@ -18,6 +19,7 @@ class ProfileState extends Equatable {
     this.location = '',
     this.currentPage = 0,
     this.skills = const [],
+    this.experiences = const [],
   });
 
   ProfileState copyWith({
@@ -28,6 +30,7 @@ class ProfileState extends Equatable {
     String? location,
     int? currentPage,
     List<String>? skills,
+    List<WorkExperience>? experiences,
   }) {
     return ProfileState(
       image: image ?? this.image,
@@ -37,11 +40,10 @@ class ProfileState extends Equatable {
       location: location ?? this.location,
       currentPage: currentPage ?? this.currentPage,
       skills: skills ?? this.skills,
+      experiences: experiences ?? this.experiences,
     );
   }
 
-  @override
-  bool get stringify => true;
   @override
   List<Object?> get props => [
     image,
@@ -51,5 +53,6 @@ class ProfileState extends Equatable {
     location,
     currentPage,
     skills,
+    experiences,
   ];
 }
