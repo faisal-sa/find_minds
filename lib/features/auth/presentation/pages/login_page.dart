@@ -16,13 +16,10 @@ class LoginPage extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go('/');
+          context.go('/profile');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -114,9 +111,9 @@ class LoginPage extends StatelessWidget {
                               : () {
                                   if (formKey.currentState!.validate()) {
                                     context.read<AuthCubit>().signInUser(
-                                          email: emailController.text.trim(),
-                                          password: passwordController.text,
-                                        );
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text,
+                                    );
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
@@ -164,4 +161,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
