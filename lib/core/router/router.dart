@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
+import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_home_page.dart';
 
 import 'package:graduation_project/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/profile/presentation/pages/profile_register_page.dart';
@@ -44,6 +46,34 @@ final GoRouter router = GoRouter(
           child: ProfileRegisterPage(),
         );
       },
+    ),
+    // --------------------- Company Routes with Bloc ---------------------
+    ShellRoute(
+      builder: (context, state, child) {
+        return BlocProvider(
+          create: (_) => serviceLocator.get<CompanyBloc>(),
+          child: child,
+        );
+      },
+      routes: [
+        GoRoute(path: '/company', builder: (_, __) => const CompanyHomePage()),
+        GoRoute(
+          path: '/company/profile',
+          builder: (_, __) => const CompanyProfilePage(),
+        ),
+        GoRoute(
+          path: '/company/search',
+          builder: (_, __) => const CompanySearchPage(),
+        ),
+        GoRoute(
+          path: '/company/bookmarks',
+          builder: (_, __) => const CompanyBookmarksPage(),
+        ),
+        GoRoute(
+          path: '/company/scan',
+          builder: (_, __) => const CompanyQrScannerPage(),
+        ),
+      ],
     ),
   ],
 );
