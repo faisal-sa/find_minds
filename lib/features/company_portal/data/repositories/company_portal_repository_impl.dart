@@ -59,4 +59,17 @@ class CompanyRepositoryImpl implements CompanyRepository {
       return Error(e.toString());
     }
   }
+
+  @override
+  Future<Result<void, String>> addCandidateBookmark(
+    String companyId,
+    String candidateId,
+  ) async {
+    try {
+      await remote.addCandidateBookmark(companyId, candidateId);
+      return const Success(null);
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
 }

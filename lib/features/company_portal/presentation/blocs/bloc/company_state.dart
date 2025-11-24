@@ -1,25 +1,43 @@
 part of 'company_bloc.dart';
 
-@immutable
-abstract class CompanyState {}
+abstract class CompanyState extends Equatable {
+  const CompanyState();
+  @override
+  List<Object?> get props => [];
+}
 
-class CompanyInitial extends CompanyState {}
+class CompanyInitial extends CompanyState {
+  const CompanyInitial();
+}
 
-class CompanyLoading extends CompanyState {}
+class CompanyLoading extends CompanyState {
+  const CompanyLoading();
+}
 
 class CompanyLoaded extends CompanyState {
   final CompanyEntity company;
-  CompanyLoaded(this.company);
+  const CompanyLoaded(this.company);
+
+  @override
+  List<Object?> get props => [company];
 }
 
 class CandidateResults extends CompanyState {
   final List<Map<String, dynamic>> candidates;
-  CandidateResults(this.candidates);
+  const CandidateResults(this.candidates);
+
+  @override
+  List<Object?> get props => [candidates];
+}
+
+class BookmarkAddedSuccessfully extends CompanyState {
+  const BookmarkAddedSuccessfully();
 }
 
 class CompanyError extends CompanyState {
   final String message;
-  CompanyError(this.message);
-}
+  const CompanyError(this.message);
 
-class BookmarkAdded extends CompanyState {}
+  @override
+  List<Object?> get props => [message];
+}
