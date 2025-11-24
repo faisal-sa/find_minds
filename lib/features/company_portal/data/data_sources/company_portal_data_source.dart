@@ -78,4 +78,15 @@ class CompanyRemoteDataSource {
 
     return await query;
   }
+
+  Future<void> addCandidateBookmark(
+    String companyId,
+    String candidateId,
+  ) async {
+    await supabase.from('company_bookmarks').insert({
+      'company_id': companyId,
+      'candidate_id': candidateId,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  }
 }

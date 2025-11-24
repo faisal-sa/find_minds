@@ -18,4 +18,8 @@ abstract class CompanyRepository {
     String? skill,
     String? experience,
   });
+  Future<Result<void, String>> addCandidateBookmark(
+    String companyId,
+    String candidateId,
+  );
 }
