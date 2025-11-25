@@ -1,6 +1,13 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:graduation_project/features/company_portal/data/models/company_model.dart';
 import 'package:graduation_project/features/company_portal/domain/entities/company_entity.dart';
+import 'package:graduation_project/features/company_portal/domain/usecases/add_candidate_bookmark.dart';
+import 'package:graduation_project/features/company_portal/domain/usecases/get_company_profile.dart';
+import 'package:graduation_project/features/company_portal/domain/usecases/search_candidates.dart';
+import 'package:graduation_project/features/company_portal/domain/usecases/update_company_profile.dart';
+import 'package:injectable/injectable.dart';
 
 part 'company_event.dart';
 part 'company_state.dart';
