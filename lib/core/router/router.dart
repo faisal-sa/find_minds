@@ -83,5 +83,33 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
+    // --------------------- Company Routes with Bloc ---------------------
+    ShellRoute(
+      builder: (context, state, child) {
+        return BlocProvider(
+          create: (_) => serviceLocator.get<CompanyBloc>(),
+          child: child,
+        );
+      },
+      routes: [
+        GoRoute(path: '/company', builder: (_, __) => const CompanyHomePage()),
+        GoRoute(
+          path: '/company/profile',
+          builder: (_, __) => const CompanyProfilePage(),
+        ),
+        GoRoute(
+          path: '/company/search',
+          builder: (_, __) => const CompanySearchPage(),
+        ),
+        GoRoute(
+          path: '/company/bookmarks',
+          builder: (_, __) => const CompanyBookmarksPage(),
+        ),
+        GoRoute(
+          path: '/company/scan',
+          builder: (_, __) => const CompanyQrScannerPage(),
+        ),
+      ],
+    ),
   ],
 );

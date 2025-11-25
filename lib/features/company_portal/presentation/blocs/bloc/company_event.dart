@@ -1,32 +1,43 @@
 part of 'company_bloc.dart';
 
-@immutable
-abstract class CompanyEvent {}
-
-class RegisterCompanyEvent extends CompanyEvent {
-  final String email;
-  final String password;
-  RegisterCompanyEvent(this.email, this.password);
+abstract class CompanyEvent extends Equatable {
+  const CompanyEvent();
+  @override
+  List<Object?> get props => [];
 }
 
 class GetCompanyProfileEvent extends CompanyEvent {
   final String userId;
-  GetCompanyProfileEvent(this.userId);
+  const GetCompanyProfileEvent(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
 }
 
 class UpdateCompanyProfileEvent extends CompanyEvent {
   final CompanyEntity company;
-  UpdateCompanyProfileEvent(this.company);
+  const UpdateCompanyProfileEvent(this.company);
+
+  @override
+  List<Object?> get props => [company];
 }
 
+// ---------- SEARCH ----------
 class SearchCandidatesEvent extends CompanyEvent {
   final String? city;
   final String? skill;
   final String? experience;
-  SearchCandidatesEvent({this.city, this.skill, this.experience});
+  const SearchCandidatesEvent({this.city, this.skill, this.experience});
+
+  @override
+  List<Object?> get props => [city, skill, experience];
 }
 
+// ---------- BOOKMARK (QR) ----------
 class AddCandidateBookmarkEvent extends CompanyEvent {
   final String candidateId;
-  AddCandidateBookmarkEvent(this.candidateId);
+  const AddCandidateBookmarkEvent(this.candidateId);
+
+  @override
+  List<Object?> get props => [candidateId];
 }
