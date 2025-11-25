@@ -8,6 +8,7 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_scanner_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
 import 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
+import 'package:graduation_project/features/individuals/features/basic_information/presentation/cubit/basic_information_cubit.dart';
 import 'package:graduation_project/features/individuals/features/basic_information/presentation/pages/basic_info_page.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
@@ -27,7 +28,7 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/company',
+  initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
@@ -78,7 +79,10 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   path: 'basic-info',
                   parentNavigatorKey: _rootNavigatorKey,
-                  builder: (context, state) => BasicInfoPage(),
+                  builder: (context, state) => BlocProvider(
+                    create: (context) => BasicInformationCubit(),
+                    child: BasicInfoPage(),
+                  ),
                 ),
                 // GoRoute(
                 //   path: 'work-experience',

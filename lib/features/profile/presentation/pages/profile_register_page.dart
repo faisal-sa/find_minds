@@ -5,9 +5,6 @@ import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/core/usecasesAbstract/no_params.dart';
 import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/features/profile/presentation/cubit/profile_cubit.dart';
-import 'package:graduation_project/features/profile/presentation/pages/about_me_page.dart';
-import 'package:graduation_project/features/profile/presentation/pages/contact_information_page.dart';
-import 'package:graduation_project/features/profile/presentation/pages/experiences_page.dart';
 
 class ProfileRegisterPage extends StatelessWidget {
   //move the controllers to cubit so you can close them
@@ -49,14 +46,14 @@ class ProfileRegisterPage extends StatelessWidget {
 
               controller: context.read<ProfileCubit>().pageController,
               children: [
-                ContactInformationPage(
-                  nameController: nameController,
-                  locationController: locationController,
-                  emailController: emailController,
-                  phoneController: phoneController,
-                ),
-                ExperiencesPage(),
-                AboutMePage(),
+                // ContactInformationPage(
+                //   nameController: nameController,
+                //   locationController: locationController,
+                //   emailController: emailController,
+                //   phoneController: phoneController,
+                // ),
+                // ExperiencesPage(),
+                // AboutMePage(),
               ],
             ),
           ),

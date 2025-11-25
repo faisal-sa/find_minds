@@ -1,10 +1,15 @@
 part of 'basic_information_cubit.dart';
 
-abstract class BasicInformationState extends Equatable {
-  const BasicInformationState();
+@immutable
+class BasicInformationState extends Equatable {
+  final File? image;
+
+  const BasicInformationState({this.image});
+
+  BasicInformationState copyWith({File? image}) {
+    return BasicInformationState(image: image ?? this.image);
+  }
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [image];
 }
-
-class BasicInformationInitial extends BasicInformationState {}
