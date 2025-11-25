@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/features/company_portal/data/models/company_model.dart';
 import 'package:graduation_project/features/company_portal/domain/entities/company_entity.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/add_candidate_bookmark.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/get_company_profile.dart';
@@ -29,6 +30,8 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     on<AddCandidateBookmarkEvent>(_onAddCandidateBookmark);
   }
 
+  // -------------------- Handlers --------------------
+
   Future<void> _onGetCompanyProfile(
     GetCompanyProfileEvent event,
     Emitter<CompanyState> emit,
@@ -46,7 +49,28 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     Emitter<CompanyState> emit,
   ) async {
     emit(const CompanyLoading());
-    final result = await _updateCompanyProfile(event.company);
+
+    // Convert Entity → Model
+    final model = CompanyModel.fromEntity(event.company);
+
+    // Apply updates (copyWith)
+    final updatedModel = model.copyWith(
+      companyName: event.company.companyName,
+      industry: event.company.industry,
+      description: event.company.description,
+      city: event.company.city,
+      address: event.company.address,
+      companySize: event.company.companySize,
+      website: event.company.website,
+      phone: event.company.phone,
+      logoUrl: event.company.logoUrl,
+    );
+
+    // Convert back to Entity
+    final updatedEntity = updatedModel.toEntity();
+
+    final result = await _updateCompanyProfile(updatedEntity);
+
     result.when(
       (company) => emit(CompanyLoaded(company)),
       (error) => emit(CompanyError(error)),

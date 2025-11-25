@@ -2,7 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_home_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_profile_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_scanner_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/company_search_page.dart';
 
 import 'package:graduation_project/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/profile/presentation/pages/profile_register_page.dart';
