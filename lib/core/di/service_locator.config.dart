@@ -42,6 +42,8 @@ import '../../features/company_portal/domain/usecases/search_candidates.dart'
     as _i754;
 import '../../features/company_portal/domain/usecases/update_company_profile.dart'
     as _i923;
+import '../../features/company_portal/presentation/blocs/bloc/company_bloc.dart'
+    as _i401;
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
 import '../env_config/env_config.dart' as _i113;
 
@@ -84,6 +86,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i533.AddCandidateBookmark>(
       () => companyModule.addCandidateBookmark(gh<_i786.CompanyRepository>()),
+    );
+    gh.factory<_i401.CompanyBloc>(
+      () => _i401.CompanyBloc(
+        gh<_i303.GetCompanyProfile>(),
+        gh<_i923.UpdateCompanyProfile>(),
+        gh<_i754.SearchCandidates>(),
+        gh<_i533.AddCandidateBookmark>(),
+      ),
     );
     gh.lazySingleton<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(gh<_i161.AuthRemoteDataSource>()),
