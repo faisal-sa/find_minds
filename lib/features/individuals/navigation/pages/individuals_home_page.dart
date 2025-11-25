@@ -1,61 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/individuals/chat/presentation/pages/chats_tab.dart';
-import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
-import 'package:graduation_project/features/individuals/navigation/cubit/navigation_cubit.dart';
-import 'package:graduation_project/features/individuals/profile/presentation/pages/profile_tab.dart';
 
 class IndividualsHomePage extends StatelessWidget {
-  const IndividualsHomePage({super.key});
+  final StatefulNavigationShell navigationShell;
+
+  const IndividualsHomePage({super.key, required this.navigationShell});
+
+  void _goBranch(int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bg,
+
       appBar: const _AppBar(),
-      body: BlocBuilder<NavigationCubit, int>(
-        builder: (context, tabIndex) {
-          return IndexedStack(
-            index: tabIndex,
-            children: const [InsightsTab(), ChatsTab(), ProfileTab()],
-          );
-        },
-      ),
-      bottomNavigationBar: BlocBuilder<NavigationCubit, int>(
-        builder: (context, tabIndex) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: Colors.grey.shade200)),
+
+      body: navigationShell,
+
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: navigationShell.currentIndex,
+          onTap: _goBranch,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          selectedItemColor: AppColors.bluePrimary,
+          unselectedItemColor: AppColors.textSub,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart),
+              label: 'Insights',
             ),
-            child: BottomNavigationBar(
-              currentIndex: tabIndex,
-              onTap: (index) => context.read<NavigationCubit>().setTab(index),
-              backgroundColor: Colors.white,
-              elevation: 0,
-              selectedItemColor: AppColors.bluePrimary,
-              unselectedItemColor: AppColors.textSub,
-              selectedFontSize: 12,
-              unselectedFontSize: 12,
-              type: .fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  label: 'Insights',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat_bubble_outline),
-                  label: 'Chats',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline),
-                  label: 'Profile',
-                ),
-              ],
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_bubble_outline),
+              label: 'Chats',
             ),
-          );
-        },
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
