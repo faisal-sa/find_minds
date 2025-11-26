@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/shared/dashboard.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/user_state.dart';
 
 class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubitTemp, UserProfileTemp>(
-      builder: (context, user) {
+    return BlocBuilder<UserCubit, UserState>(
+      builder: (context, state) {
+        final isComplete = state.profileCompletion >= 0.8;
+
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +38,7 @@ class ChatsTab extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Text(
-                  user.isComplete
+                  isComplete
                       ? "We'll notify you when a company reaches out."
                       : "Complete your profile to start matching with companies.",
                   textAlign: TextAlign.center,

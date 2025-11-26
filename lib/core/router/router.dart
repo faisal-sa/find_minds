@@ -13,7 +13,6 @@ import 'package:graduation_project/features/individuals/features/basic_info/pres
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/pages/profile_tab.dart';
-import 'package:graduation_project/features/shared/temp.dart';
 import 'package:graduation_project/features/individuals/navigation/pages/individuals_home_page.dart';
 
 import 'package:graduation_project/features/auth/presentation/pages/login_page.dart';
@@ -21,7 +20,7 @@ import 'package:graduation_project/features/auth/presentation/pages/signup_page.
 import 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
 
 import 'package:flutter/material.dart';
-import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
 
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -46,7 +45,7 @@ final GoRouter router = GoRouter(
       builder: (context, state, navigationShell) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => UserCubitTemp()),
+            BlocProvider.value(value: serviceLocator.get<UserCubit>()),
             BlocProvider(create: (context) => ProfileCubit()),
           ],
           child: IndividualsHomePage(navigationShell: navigationShell),
@@ -81,14 +80,19 @@ final GoRouter router = GoRouter(
                   path: 'basic-info',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
-                    final currentUser = context.read<UserCubit>().state.user;
+                    final userCubit = serviceLocator.get<UserCubit>();
 
-                    return BlocProvider(
-                      create: (context) {
-                        final cubit = serviceLocator.get<BasicInfoCubit>();
-                        cubit.initialize(currentUser);
-                        return cubit;
-                      },
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: userCubit),
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = serviceLocator.get<BasicInfoCubit>();
+                            cubit.initialize(userCubit.state.user);
+                            return cubit;
+                          },
+                        ),
+                      ],
                       child: const BasicInfoPage(),
                     );
                   },

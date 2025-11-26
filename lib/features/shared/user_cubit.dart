@@ -1,13 +1,17 @@
 // user_cubit.dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/features/shared/user_entity.dart';
+import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:injectable/injectable.dart';
+
+@LazySingleton()
 class UserCubit extends Cubit<UserState> {
   UserCubit() : super(const UserState());
 
-  // Call this when the app starts or after login
   void setInitialUserData(UserEntity user) {
     emit(state.copyWith(user: user));
   }
 
-  // Call this from other Cubits/Pages when data changes
   void updateUserProfile({
     String? firstName,
     String? lastName,
@@ -26,7 +30,6 @@ class UserCubit extends Cubit<UserState> {
           location: location,
         ) ??
         UserEntity(
-          // Fallback if creating new
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           jobTitle: jobTitle ?? '',
@@ -36,5 +39,9 @@ class UserCubit extends Cubit<UserState> {
         );
 
     emit(state.copyWith(user: updatedUser));
+  }
+
+  void updateUser(UserEntity newUser) {
+    emit(state.copyWith(user: newUser));
   }
 }

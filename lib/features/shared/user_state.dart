@@ -7,7 +7,6 @@ class UserState extends Equatable {
 
   const UserState({this.user = const UserEntity()});
 
-  // Calculate profile strength dynamically
   double get profileCompletion {
     int total = 0;
     int filled = 0;
@@ -35,11 +34,11 @@ class UserState extends Equatable {
   List<Object> get props => [user];
 }
 
-class UserCubit extends Cubit<UserState> {
-  UserCubit() : super(const UserState());
+// class UserCubit extends Cubit<UserState> {
+//   UserCubit() : super(const UserState());
 
-  // Call this to update the global app state
-  void updateUser(UserEntity newUser) {
-    emit(state.copyWith(user: newUser));
-  }
-}
+//   // Call this to update the global app state
+//   void updateUser(UserEntity newUser) {
+//     emit(state.copyWith(user: newUser));
+//   }
+// }

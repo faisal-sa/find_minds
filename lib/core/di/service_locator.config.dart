@@ -55,6 +55,7 @@ import '../../features/individuals/features/basic_info/domain/usecases/save_basi
 import '../../features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart'
     as _i37;
 import '../../features/profile/presentation/cubit/profile_cubit.dart' as _i36;
+import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -71,6 +72,7 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.factory<_i36.ProfileCubit>(() => _i36.ProfileCubit());
+    gh.lazySingleton<_i171.UserCubit>(() => _i171.UserCubit());
     gh.lazySingleton<_i252.CompanyRemoteDataSource>(
       () => companyModule.provideRemoteDS(gh<_i454.SupabaseClient>()),
     );

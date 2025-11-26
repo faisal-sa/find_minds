@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/shared/dashboard.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/feature_card.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/locked_feature_card.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/user_state.dart';
 
 class InsightsTab extends StatelessWidget {
   const InsightsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubitTemp, UserProfileTemp>(
-      builder: (context, user) {
+    return BlocBuilder<UserCubit, UserState>(
+      builder: (context, state) {
+        final userEntity = state.user;
+        final completionRatio = state.profileCompletion;
+        final completionPercent = (completionRatio * 100).toInt();
+        final isComplete = completionRatio >= 0.8;
+
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildWelcomeCard(context, user),
+              _buildWelcomeCard(context, state, isComplete, completionPercent),
               const SizedBox(height: 24),
 
               const Text(
@@ -27,10 +33,9 @@ class InsightsTab extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Row(
-                //locked vs unlocked
                 children: [
                   Expanded(
-                    child: user.isComplete
+                    child: isComplete
                         ? FeatureCard(
                             child: Column(
                               children: [
@@ -85,7 +90,7 @@ class InsightsTab extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: user.isComplete
+                    child: isComplete
                         ? FeatureCard(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +177,7 @@ class InsightsTab extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              if (user.isComplete)
+              if (isComplete)
                 _buildAnalyticsSection()
               else
                 const LockedFeatureCard(
@@ -187,7 +192,17 @@ class InsightsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeCard(BuildContext context, UserProfileTemp user) {
+  Widget _buildWelcomeCard(
+    BuildContext context,
+    UserState state,
+    bool isComplete,
+    int progressPercent,
+  ) {
+    // Fallback to "User" if firstName is empty
+    final displayName = state.user.firstName.isNotEmpty
+        ? state.user.firstName
+        : "User";
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -211,8 +226,8 @@ class InsightsTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            user.isComplete
-                ? "Welcome back, ${user.name}! 👋"
+            isComplete
+                ? "Welcome back, $displayName! 👋"
                 : "Welcome to FINDMinds! 👋",
             style: const TextStyle(
               color: Colors.white,
@@ -222,7 +237,7 @@ class InsightsTab extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            user.isComplete
+            isComplete
                 ? "Your profile is active and ready to match."
                 : "Let's get your profile ready for top companies.",
             style: TextStyle(color: Colors.blue.shade100, fontSize: 14),
@@ -250,7 +265,7 @@ class InsightsTab extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${user.progress}% Complete",
+                      "$progressPercent% Complete",
                       style: TextStyle(
                         color: Colors.blue.shade100,
                         fontSize: 12,
@@ -276,7 +291,7 @@ class InsightsTab extends StatelessWidget {
                       height: 8,
                       width:
                           MediaQuery.of(context).size.width *
-                          (user.progress / 100) *
+                          state.profileCompletion * // Use double directly
                           0.7,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -289,7 +304,7 @@ class InsightsTab extends StatelessWidget {
             ),
           ),
 
-          if (!user.isComplete) ...[
+          if (!isComplete) ...[
             const SizedBox(height: 24),
             Text(
               "NEXT STEPS",
@@ -305,7 +320,17 @@ class InsightsTab extends StatelessWidget {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => context.read<UserCubitTemp>().uploadResume(),
+                onTap: () {
+                  // SIMULATION: for resume parse
+                  context.read<UserCubit>().updateUserProfile(
+                    firstName: "Alex",
+                    lastName: "Morgan",
+                    jobTitle: "Flutter Developer",
+                    email: "alex@example.com",
+                    phone: "555-0123",
+                    location: "Remote",
+                  );
+                },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.all(12),
@@ -375,7 +400,7 @@ class InsightsTab extends StatelessWidget {
                             ),
                             SizedBox(width: 4),
                             Text(
-                              "+40%",
+                              "+100%",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,

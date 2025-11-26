@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/widgets/custom_text_field.dart';
-import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
 
 class BasicInfoPage extends StatelessWidget {
   const BasicInfoPage({super.key});
@@ -16,12 +16,11 @@ class BasicInfoPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Basic Information',
-          style: TextStyle(
-            color: Color(0xFF1E293B),
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: TextStyle(color: Color(0xFF1E293B)),
         ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BlocListener<BasicInfoCubit, BasicInfoState>(
         listener: (context, state) {
@@ -44,8 +43,7 @@ class BasicInfoPage extends StatelessWidget {
               ),
             );
 
-            // Optional: Pop back to profile
-            // Navigator.of(context).pop();
+            Navigator.of(context).pop();
           } else if (state.status == FormStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -58,7 +56,6 @@ class BasicInfoPage extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -66,6 +63,7 @@ class BasicInfoPage extends StatelessWidget {
                     child: CustomTextField(
                       label: 'First Name',
                       hint: 'John',
+
                       initialValue: currentUser.firstName,
                       onChanged: (val) =>
                           context.read<BasicInfoCubit>().firstNameChanged(val),
@@ -84,42 +82,36 @@ class BasicInfoPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-
               CustomTextField(
                 label: 'Job Title',
-                hint: 'e.g. Software Engineer',
+                hint: 'Software Engineer',
                 initialValue: currentUser.jobTitle,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().jobTitleChanged(val),
               ),
               const SizedBox(height: 24),
-
               CustomTextField(
-                label: 'Phone Number',
-                hint: '(123) 456-7890',
-                keyboardType: TextInputType.phone,
+                label: 'Location',
+                hint: 'New York, USA',
+                initialValue: currentUser.location,
+                onChanged: (val) =>
+                    context.read<BasicInfoCubit>().locationChanged(val),
+              ),
+              const SizedBox(height: 24),
+              CustomTextField(
+                label: 'Phone',
+                hint: '1234567890',
                 initialValue: currentUser.phoneNumber,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().phoneChanged(val),
               ),
               const SizedBox(height: 24),
-
               CustomTextField(
                 label: 'Email',
-                hint: 'john.doe@email.com',
-                keyboardType: TextInputType.emailAddress,
+                hint: 'email@example.com',
                 initialValue: currentUser.email,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().emailChanged(val),
-              ),
-              const SizedBox(height: 24),
-
-              CustomTextField(
-                label: 'Location',
-                hint: 'e.g. San Francisco, CA',
-                initialValue: currentUser.location,
-                onChanged: (val) =>
-                    context.read<BasicInfoCubit>().locationChanged(val),
               ),
 
               const SizedBox(height: 48),
@@ -140,28 +132,10 @@ class BasicInfoPage extends StatelessWidget {
                     : () => context.read<BasicInfoCubit>().saveForm(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3B82F6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 0,
                 ),
                 child: state.status == FormStatus.loading
-                    ? const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Save',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Save', style: TextStyle(color: Colors.white)),
               ),
             );
           },

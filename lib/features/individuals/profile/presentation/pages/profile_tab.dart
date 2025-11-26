@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/user_state.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -76,22 +78,22 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Wrap in BlocBuilder to listen for data changes
-    return BlocBuilder<ProfileCubit, ProfileState>(
+    // 1. Listen to UserCubit to get the actual data
+    return BlocBuilder<UserCubit, UserState>(
       builder: (context, state) {
-        // MOCK DATA: Replace these with actual data from your 'state'
-        // String? name = state.user?.name;
-        // String? jobTitle = state.user?.jobTitle;
-        // String? location = state.user?.location;
+        final user = state.user;
 
-        // For demonstration, let's pretend:
-        const String? name = null; // Change to null to test empty
-        const String? jobTitle = null; // Currently empty
-        const String? location = null;
+        // Logic to construct the full name
+        final String fullName = '${user.firstName} ${user.lastName}'.trim();
+        final bool hasName = fullName.isNotEmpty;
+
+        // Logic for Job and Location
+        final bool hasJob = user.jobTitle.isNotEmpty;
+        final bool hasLocation = user.location.isNotEmpty;
 
         return Column(
           children: [
-            // --- AVATAR SECTION (Kept from previous step) ---
+            // --- AVATAR SECTION ---
             Stack(
               children: [
                 Container(
@@ -103,7 +105,7 @@ class _ProfileHeader extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 55,
                     backgroundColor: Colors.grey[200],
-                    // Logic: Show Image if exists, else Icon
+                    // Logic: You can add user.profileImage here later
                     backgroundImage: null,
                     child: const Icon(
                       Icons.person,
@@ -141,9 +143,10 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(height: 16),
 
             // --- NAME SECTION ---
-            if (name != null && name.isNotEmpty)
+            if (hasName)
               Text(
-                name,
+                fullName,
+                textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
@@ -152,7 +155,7 @@ class _ProfileHeader extends StatelessWidget {
                 ),
               )
             else
-              // GUEST/EMPTY NAME STATE - Looks like a premium button
+              // GUEST/EMPTY NAME STATE
               GestureDetector(
                 onTap: () => context.read<ProfileCubit>().onBasicInfoTapped(),
                 child: Container(
@@ -166,7 +169,7 @@ class _ProfileHeader extends StatelessWidget {
                     border: Border.all(
                       color: const Color(0xFFDBEAFE),
                       width: 1,
-                    ), // Blue-100
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -176,7 +179,7 @@ class _ProfileHeader extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF2563EB), // Primary Blue
+                          color: Color(0xFF2563EB),
                         ),
                       ),
                       SizedBox(width: 8),
@@ -192,10 +195,9 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(height: 8),
 
             // --- JOB TITLE SECTION ---
-            // If job exists, show text. If not, show an "Add" button
-            if (jobTitle != null && jobTitle.isNotEmpty)
+            if (hasJob)
               Text(
-                jobTitle,
+                user.jobTitle,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
@@ -212,14 +214,14 @@ class _ProfileHeader extends StatelessWidget {
             const SizedBox(height: 6),
 
             // --- LOCATION SECTION ---
-            if (location != null && location.isNotEmpty)
+            if (hasLocation)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.location_on, size: 14, color: Colors.grey),
                   const SizedBox(width: 4),
                   Text(
-                    location,
+                    user.location,
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
@@ -237,7 +239,68 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-// Helper Widget to make the "Empty" state look good
+class _ProfileCompletionBar extends StatelessWidget {
+  const _ProfileCompletionBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserCubit, UserState>(
+      builder: (context, state) {
+        final double progress = state.profileCompletion;
+        final String percentageText = "${(progress * 100).toInt()}%";
+
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Profile Completion",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  percentageText,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2563EB),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 8,
+                backgroundColor: const Color(0xFFE5E7EB),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFF2563EB),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Complete your profile to get noticed by recruiters.",
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// --- Helpers (Kept as is) ---
+
 class _EmptyStateChip extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -277,57 +340,6 @@ class _EmptyStateChip extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ProfileCompletionBar extends StatelessWidget {
-  const _ProfileCompletionBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Profile Completion",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            Text(
-              "0%",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2563EB),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: const LinearProgressIndicator(
-            value: 0.0,
-            minHeight: 8,
-            backgroundColor: Color(0xFFE5E7EB),
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Complete your profile to get noticed by recruiters.",
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-        ),
-      ],
     );
   }
 }
