@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final String label;
   final String hint;
+  final String? initialValue;
   final Function(String) onChanged;
   final TextInputType keyboardType;
 
@@ -11,6 +12,7 @@ class CustomTextField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.onChanged,
+    this.initialValue,
     this.keyboardType = TextInputType.text,
   });
 
@@ -28,7 +30,8 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        TextField(
+        TextFormField(
+          initialValue: initialValue,
           onChanged: onChanged,
           keyboardType: keyboardType,
           style: const TextStyle(color: Color(0xFF334155)),

@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/domain/entities/basic_info_entity.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/domain/usecases/save_basic_info_usecase.dart';
+import 'package:graduation_project/features/shared/user_entity.dart';
 import 'package:injectable/injectable.dart';
 
 part 'basic_info_state.dart';
@@ -13,6 +13,19 @@ class BasicInfoCubit extends Cubit<BasicInfoState> {
 
   BasicInfoCubit(this._saveBasicInfoUseCase) : super(const BasicInfoState());
 
+  void initialize(UserEntity user) {
+    emit(
+      state.copyWith(
+        firstName: user.firstName,
+        lastName: user.lastName,
+        jobTitle: user.jobTitle,
+        phoneNumber: user.phoneNumber,
+        email: user.email,
+        location: user.location,
+      ),
+    );
+  }
+
   void firstNameChanged(String value) => emit(state.copyWith(firstName: value));
   void lastNameChanged(String value) => emit(state.copyWith(lastName: value));
   void jobTitleChanged(String value) => emit(state.copyWith(jobTitle: value));
@@ -22,11 +35,10 @@ class BasicInfoCubit extends Cubit<BasicInfoState> {
 
   Future<void> saveForm() async {
     if (state.status == FormStatus.loading) return;
-
     emit(state.copyWith(status: FormStatus.loading));
 
     try {
-      final basicInfoEntity = BasicInfoEntity(
+      final entity = BasicInfoEntity(
         firstName: state.firstName,
         lastName: state.lastName,
         jobTitle: state.jobTitle,
@@ -35,11 +47,10 @@ class BasicInfoCubit extends Cubit<BasicInfoState> {
         location: state.location,
       );
 
-      await _saveBasicInfoUseCase(basicInfoEntity);
+      await _saveBasicInfoUseCase(entity);
 
       emit(state.copyWith(status: FormStatus.success));
     } catch (e) {
-      debugPrint("Error in Cubit: $e");
       emit(state.copyWith(status: FormStatus.failure));
     }
   }

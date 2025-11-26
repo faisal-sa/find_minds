@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
-class UserProfile extends Equatable {
+class UserProfileTemp extends Equatable {
   final String? name;
 
-  const UserProfile({this.name});
+  const UserProfileTemp({this.name});
 
   bool get isComplete => name != null && name!.isNotEmpty;
 
@@ -14,14 +14,14 @@ class UserProfile extends Equatable {
   List<Object?> get props => [name];
 }
 
-class UserCubit extends Cubit<UserProfile> {
-  UserCubit() : super(const UserProfile(name: null));
+class UserCubitTemp extends Cubit<UserProfileTemp> {
+  UserCubitTemp() : super(const UserProfileTemp(name: null));
 
   void uploadResume() {
-    emit(const UserProfile(name: "Alex Johnson"));
+    emit(const UserProfileTemp(name: "Alex Johnson"));
   }
 
   void resetProfile() {
-    emit(const UserProfile(name: null));
+    emit(const UserProfileTemp(name: null));
   }
 }

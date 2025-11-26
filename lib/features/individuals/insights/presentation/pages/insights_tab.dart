@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/temp/dashboard.dart';
+import 'package:graduation_project/features/shared/dashboard.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/feature_card.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/locked_feature_card.dart';
 
@@ -10,7 +10,7 @@ class InsightsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubit, UserProfile>(
+    return BlocBuilder<UserCubitTemp, UserProfileTemp>(
       builder: (context, user) {
         return SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -187,7 +187,7 @@ class InsightsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildWelcomeCard(BuildContext context, UserProfile user) {
+  Widget _buildWelcomeCard(BuildContext context, UserProfileTemp user) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -305,7 +305,7 @@ class InsightsTab extends StatelessWidget {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => context.read<UserCubit>().uploadResume(),
+                onTap: () => context.read<UserCubitTemp>().uploadResume(),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: const EdgeInsets.all(12),

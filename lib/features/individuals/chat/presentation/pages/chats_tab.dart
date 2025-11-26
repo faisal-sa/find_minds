@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/temp/dashboard.dart';
+import 'package:graduation_project/features/shared/dashboard.dart';
 
 class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubit, UserProfile>(
+    return BlocBuilder<UserCubitTemp, UserProfileTemp>(
       builder: (context, user) {
         return Center(
           child: Column(

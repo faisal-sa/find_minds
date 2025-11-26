@@ -2,22 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/widgets/custom_text_field.dart';
+import 'package:graduation_project/features/shared/user_state.dart';
 
 class BasicInfoPage extends StatelessWidget {
   const BasicInfoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<UserCubit>().state.user;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF1E293B)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
         title: const Text(
           'Basic Information',
           style: TextStyle(
@@ -30,16 +26,30 @@ class BasicInfoPage extends StatelessWidget {
       body: BlocListener<BasicInfoCubit, BasicInfoState>(
         listener: (context, state) {
           if (state.status == FormStatus.success) {
+            final updatedUser = currentUser.copyWith(
+              firstName: state.firstName,
+              lastName: state.lastName,
+              jobTitle: state.jobTitle,
+              phoneNumber: state.phoneNumber,
+              email: state.email,
+              location: state.location,
+            );
+
+            context.read<UserCubit>().updateUser(updatedUser);
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Profile Saved Successfully!'),
+                content: Text('Profile Saved!'),
                 backgroundColor: Colors.green,
               ),
             );
+
+            // Optional: Pop back to profile
+            // Navigator.of(context).pop();
           } else if (state.status == FormStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Failed to save profile'),
+                content: Text('Failed to save'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -56,6 +66,7 @@ class BasicInfoPage extends StatelessWidget {
                     child: CustomTextField(
                       label: 'First Name',
                       hint: 'John',
+                      initialValue: currentUser.firstName,
                       onChanged: (val) =>
                           context.read<BasicInfoCubit>().firstNameChanged(val),
                     ),
@@ -65,6 +76,7 @@ class BasicInfoPage extends StatelessWidget {
                     child: CustomTextField(
                       label: 'Last Name',
                       hint: 'Doe',
+                      initialValue: currentUser.lastName,
                       onChanged: (val) =>
                           context.read<BasicInfoCubit>().lastNameChanged(val),
                     ),
@@ -76,6 +88,7 @@ class BasicInfoPage extends StatelessWidget {
               CustomTextField(
                 label: 'Job Title',
                 hint: 'e.g. Software Engineer',
+                initialValue: currentUser.jobTitle,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().jobTitleChanged(val),
               ),
@@ -85,6 +98,7 @@ class BasicInfoPage extends StatelessWidget {
                 label: 'Phone Number',
                 hint: '(123) 456-7890',
                 keyboardType: TextInputType.phone,
+                initialValue: currentUser.phoneNumber,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().phoneChanged(val),
               ),
@@ -94,6 +108,7 @@ class BasicInfoPage extends StatelessWidget {
                 label: 'Email',
                 hint: 'john.doe@email.com',
                 keyboardType: TextInputType.emailAddress,
+                initialValue: currentUser.email,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().emailChanged(val),
               ),
@@ -102,6 +117,7 @@ class BasicInfoPage extends StatelessWidget {
               CustomTextField(
                 label: 'Location',
                 hint: 'e.g. San Francisco, CA',
+                initialValue: currentUser.location,
                 onChanged: (val) =>
                     context.read<BasicInfoCubit>().locationChanged(val),
               ),
