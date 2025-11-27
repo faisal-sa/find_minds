@@ -29,6 +29,7 @@ class UserState extends Equatable {
     checkString(user.summary);
 
     checkList(user.workExperiences);
+    checkList(user.educations); // Added check
 
     return total == 0 ? 0.0 : (filled / total);
   }

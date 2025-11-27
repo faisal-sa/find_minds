@@ -12,6 +12,8 @@ import 'package:graduation_project/features/individuals/features/about_me/presen
 import 'package:graduation_project/features/individuals/features/about_me/presentation/pages/about_me_page.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/pages/basic_info_page.dart';
+import 'package:graduation_project/features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart';
+import 'package:graduation_project/features/individuals/features/education/presentation/pages/education_page.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/pages/work_experience_page.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/add_work_experience_modal.dart';
@@ -138,6 +140,18 @@ final GoRouter router = GoRouter(
                           serviceLocator.get<WorkExperienceListCubit>()
                             ..loadExperiences(),
                       child: const ExperiencesPage(),
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: 'education',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    return BlocProvider(
+                      create: (context) =>
+                          serviceLocator.get<EducationListCubit>()
+                            ..loadEducations(),
+                      child: const EducationPage(),
                     );
                   },
                 ),

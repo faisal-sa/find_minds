@@ -66,6 +66,24 @@ import '../../features/individuals/features/basic_info/domain/usecases/save_basi
     as _i961;
 import '../../features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart'
     as _i37;
+import '../../features/individuals/features/education/data/datasources/education_remote_data_source.dart'
+    as _i380;
+import '../../features/individuals/features/education/data/repositories/education_repository_impl.dart'
+    as _i999;
+import '../../features/individuals/features/education/domain/repositories/education_repository.dart'
+    as _i843;
+import '../../features/individuals/features/education/domain/usecases/add_education_usecase.dart'
+    as _i965;
+import '../../features/individuals/features/education/domain/usecases/delete_education_usecase.dart'
+    as _i947;
+import '../../features/individuals/features/education/domain/usecases/get_educations_usecase.dart'
+    as _i947;
+import '../../features/individuals/features/education/domain/usecases/update_education_usecase.dart'
+    as _i906;
+import '../../features/individuals/features/education/presentation/cubit/form/education_form_cubit.dart'
+    as _i896;
+import '../../features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart'
+    as _i828;
 import '../../features/individuals/features/work_experience/data/datasources/work_experience_remote_data_source.dart'
     as _i271;
 import '../../features/individuals/features/work_experience/data/repositories/work_experience_repository_impl.dart'
@@ -113,6 +131,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i454.SupabaseClient>(),
       ),
     );
+    gh.lazySingleton<_i380.EducationRemoteDataSource>(
+      () => _i380.EducationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
     gh.lazySingleton<_i1047.DeleteAboutMeVideoUseCase>(
       () => _i1047.DeleteAboutMeVideoUseCase(gh<_i542.AboutMeRepository>()),
     );
@@ -126,6 +147,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => companyModule.provideCompanyRepository(
         gh<_i252.CompanyRemoteDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i843.EducationRepository>(
+      () =>
+          _i999.EducationRepositoryImpl(gh<_i380.EducationRemoteDataSource>()),
     );
     gh.lazySingleton<_i271.WorkExperienceRemoteDataSource>(
       () =>
@@ -165,6 +190,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(gh<_i161.AuthRemoteDataSource>()),
     );
+    gh.lazySingleton<_i965.AddEducationUseCase>(
+      () => _i965.AddEducationUseCase(gh<_i843.EducationRepository>()),
+    );
+    gh.lazySingleton<_i947.DeleteEducationUseCase>(
+      () => _i947.DeleteEducationUseCase(gh<_i843.EducationRepository>()),
+    );
+    gh.lazySingleton<_i947.GetEducationsUseCase>(
+      () => _i947.GetEducationsUseCase(gh<_i843.EducationRepository>()),
+    );
+    gh.lazySingleton<_i906.UpdateEducationUseCase>(
+      () => _i906.UpdateEducationUseCase(gh<_i843.EducationRepository>()),
+    );
     gh.factory<_i781.AboutMeCubit>(
       () => _i781.AboutMeCubit(
         gh<_i250.SaveAboutMeUseCase>(),
@@ -173,6 +210,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i591.BasicInfoRepository>(
       () => _i500.BasicInfoRepositoryImpl(gh<_i25.BasicInfoRemoteDataSource>()),
+    );
+    gh.factory<_i896.EducationFormCubit>(
+      () => _i896.EducationFormCubit(
+        gh<_i965.AddEducationUseCase>(),
+        gh<_i906.UpdateEducationUseCase>(),
+      ),
     );
     gh.lazySingleton<_i794.AddWorkExperienceUseCase>(
       () =>
@@ -190,6 +233,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i56.UpdateWorkExperienceUseCase>(
       () => _i56.UpdateWorkExperienceUseCase(
         gh<_i651.WorkExperienceRepository>(),
+      ),
+    );
+    gh.factory<_i828.EducationListCubit>(
+      () => _i828.EducationListCubit(
+        gh<_i947.GetEducationsUseCase>(),
+        gh<_i947.DeleteEducationUseCase>(),
       ),
     );
     gh.factory<_i111.GetCurrentUser>(

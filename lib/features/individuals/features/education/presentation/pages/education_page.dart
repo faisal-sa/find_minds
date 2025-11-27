@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_state.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/add_work_experience_modal.dart';
-
+import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:intl/intl.dart';
 
-class ExperiencesPage extends StatelessWidget {
-  const ExperiencesPage({super.key});
+import '../cubit/list/education_list_cubit.dart';
+import '../cubit/list/education_list_state.dart';
+import '../widgets/add_education_modal.dart';
+
+class EducationPage extends StatelessWidget {
+  const EducationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class ExperiencesPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: const Text(
-          'Work Experience',
+          'Education',
           style: TextStyle(color: Color(0xFF1E293B)),
         ),
         backgroundColor: Colors.white,
@@ -25,7 +25,7 @@ class ExperiencesPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
-            onPressed: () => AddWorkExperienceModal.show(context, null),
+            onPressed: () => AddEducationModal.show(context, null),
             icon: const Icon(
               Icons.add_circle_outline,
               color: Color(0xFF3B82F6),
@@ -33,7 +33,7 @@ class ExperiencesPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<WorkExperienceListCubit, WorkExperienceListState>(
+      body: BlocBuilder<EducationListCubit, EducationListState>(
         builder: (context, state) {
           if (state.status == ListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
@@ -44,26 +44,26 @@ class ExperiencesPage extends StatelessWidget {
             );
           }
 
-          final experiences = state.experiences;
+          final educations = state.educations;
 
-          if (experiences.isEmpty) {
+          if (educations.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.work_outline,
+                    Icons.school_outlined,
                     size: 48.sp,
                     color: Colors.grey[300],
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    "No experience listed",
+                    "No education listed",
                     style: TextStyle(color: Colors.grey[500], fontSize: 16.sp),
                   ),
                   TextButton(
-                    onPressed: () => AddWorkExperienceModal.show(context, null),
-                    child: const Text("Add your first role"),
+                    onPressed: () => AddEducationModal.show(context, null),
+                    child: const Text("Add your education"),
                   ),
                 ],
               ),
@@ -72,16 +72,15 @@ class ExperiencesPage extends StatelessWidget {
 
           return ListView.separated(
             padding: EdgeInsets.all(24.w),
-            itemCount: experiences.length,
+            itemCount: educations.length,
             separatorBuilder: (_, __) => SizedBox(height: 16.h),
             itemBuilder: (context, index) {
-              final exp = experiences[index];
-              return _ExperienceCard(
-                experience: exp,
-                onDelete: () => context
-                    .read<WorkExperienceListCubit>()
-                    .deleteExperience(exp.id),
-                onEdit: () => AddWorkExperienceModal.show(context, exp),
+              final edu = educations[index];
+              return _EducationCard(
+                education: edu,
+                onDelete: () =>
+                    context.read<EducationListCubit>().deleteEducation(edu.id),
+                onEdit: () => AddEducationModal.show(context, edu),
               );
             },
           );
@@ -91,13 +90,13 @@ class ExperiencesPage extends StatelessWidget {
   }
 }
 
-class _ExperienceCard extends StatelessWidget {
-  final WorkExperience experience;
+class _EducationCard extends StatelessWidget {
+  final Education education;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
-  const _ExperienceCard({
-    required this.experience,
+  const _EducationCard({
+    required this.education,
     required this.onDelete,
     required this.onEdit,
   });
@@ -106,7 +105,7 @@ class _ExperienceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final fmt = DateFormat('MMM yyyy');
     final dateStr =
-        "${fmt.format(experience.startDate)} - ${experience.isCurrentlyWorking ? 'Present' : (experience.endDate != null ? fmt.format(experience.endDate!) : '')}";
+        "${fmt.format(education.startDate)} - ${fmt.format(education.endDate)}";
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -133,7 +132,7 @@ class _ExperienceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      experience.jobTitle,
+                      "${education.degreeType} in ${education.fieldOfStudy}",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -141,7 +140,7 @@ class _ExperienceCard extends StatelessWidget {
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      "${experience.companyName} • ${experience.employmentType}",
+                      education.institutionName,
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Colors.grey[700],
@@ -155,6 +154,18 @@ class _ExperienceCard extends StatelessWidget {
                         color: Colors.grey[500],
                       ),
                     ),
+                    if (education.gpa != null && education.gpa!.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.h),
+                        child: Text(
+                          "GPA: ${education.gpa}",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.blue[600],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -164,7 +175,7 @@ class _ExperienceCard extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: onEdit,
-                    constraints: const BoxConstraints(), // Reduces padding
+                    constraints: const BoxConstraints(),
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     icon: Icon(
                       Icons.edit_outlined,
@@ -186,9 +197,36 @@ class _ExperienceCard extends StatelessWidget {
               ),
             ],
           ),
-          if (experience.responsibilities.isNotEmpty) ...[
+
+          // Attachments Indicator
+          if (education.graduationCertificate != null ||
+              education.academicRecord != null)
+            Padding(
+              padding: EdgeInsets.only(top: 8.h),
+              child: Row(
+                children: [
+                  Icon(Icons.attach_file, size: 14.sp, color: Colors.grey[500]),
+                  SizedBox(width: 4.w),
+                  Text(
+                    "Attachments available",
+                    style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+            ),
+
+          if (education.activities.isNotEmpty) ...[
             Divider(height: 24.h, color: Colors.grey[100]),
-            ...experience.responsibilities.map(
+            Text(
+              "Activities & Societies",
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[800],
+              ),
+            ),
+            SizedBox(height: 8.h),
+            ...education.activities.map(
               (r) => Padding(
                 padding: EdgeInsets.only(bottom: 4.h),
                 child: Row(
