@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
+import 'package:graduation_project/features/CRinfo/cr_info_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_home_page.dart';
@@ -29,6 +30,7 @@ import 'package:graduation_project/features/auth/presentation/pages/signup_page.
 import 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:graduation_project/features/payment/pay_page.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
 
 // keep it here for now
@@ -217,5 +219,22 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
+
+    // ==================  Pay Page  =================== //
+    //
+    GoRoute(
+      path: '/pay',
+      builder: (context, state) {
+        return const PayPage();
+      },
+    ),
+    GoRoute(
+      path: '/crInfo',
+      builder: (context, state) {
+        return const CrInfoPage(); //spalsh later page
+      },
+    ),
+
+    //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE END ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
   ],
 );
