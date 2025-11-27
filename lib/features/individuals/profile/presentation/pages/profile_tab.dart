@@ -48,9 +48,16 @@ class ProfileTab extends StatelessWidget {
               ),
               ProfileMenuItem(
                 icon: Icons.school_outlined,
-                title: 'Education & Certifications',
-                subtitle: 'Add degrees, courses, and certificates',
+                title: 'Education',
+                subtitle: 'Add degrees',
                 onTap: () => context.read<ProfileCubit>().onEducationTapped(),
+              ),
+              ProfileMenuItem(
+                icon: Icons.school_outlined,
+                title: 'Certifications',
+                subtitle: 'courses, and certificates',
+                onTap: () =>
+                    context.read<ProfileCubit>().onCertificationsTapped(),
               ),
               ProfileMenuItem(
                 icon: Icons.translate,

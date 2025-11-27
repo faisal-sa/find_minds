@@ -21,6 +21,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileNavigateTo(ProfileRoutes.education));
   }
 
+  void onCertificationsTapped() {
+    emit(ProfileNavigateTo(ProfileRoutes.certification));
+  }
+
   void onSkillsTapped() {
     emit(ProfileNavigateTo(ProfileRoutes.skills));
   }

@@ -23,4 +23,5 @@ class ProfileRoutes {
   static const String education = '/profile/education';
   static const String skills = '/profile/skills';
   static const String jobPreferences = '/profile/preferences';
+  static const String certification = '/profile/certification';
 }
