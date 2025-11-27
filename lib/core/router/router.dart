@@ -65,11 +65,8 @@ final GoRouter router = GoRouter(
                       providers: [
                         BlocProvider.value(value: userCubit),
                         BlocProvider(
-                          create: (context) {
-                            final cubit = serviceLocator.get<BasicInfoCubit>();
-                            cubit.initialize(userCubit.state.user);
-                            return cubit;
-                          },
+                          create: (context) =>
+                              serviceLocator.get<BasicInfoCubit>(),
                         ),
                       ],
                       child: const BasicInfoPage(),
