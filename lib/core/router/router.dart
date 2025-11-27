@@ -16,15 +16,14 @@ import 'package:graduation_project/features/individuals/features/certifications/
 import 'package:graduation_project/features/individuals/features/certifications/presentation/pages/certification_page.dart';
 import 'package:graduation_project/features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart';
 import 'package:graduation_project/features/individuals/features/education/presentation/pages/education_page.dart';
+import 'package:graduation_project/features/individuals/features/job_preferences/presentation/pages/job_preferences_page.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/presentation/pages/skills_page.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/pages/work_experience_page.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/add_work_experience_modal.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/pages/insights_tab.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/pages/profile_tab.dart';
 import 'package:graduation_project/features/individuals/navigation/pages/individuals_home_page.dart';
-
 import 'package:graduation_project/features/auth/presentation/pages/login_page.dart';
 import 'package:graduation_project/features/auth/presentation/pages/signup_page.dart';
 import 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
@@ -175,6 +174,13 @@ final GoRouter router = GoRouter(
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
                     return const SkillsPage();
+                  },
+                ),
+                GoRoute(
+                  path: 'preferences',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    return const JobPreferencesPage();
                   },
                 ),
               ],

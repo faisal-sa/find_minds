@@ -102,6 +102,18 @@ import '../../features/individuals/features/education/presentation/cubit/form/ed
     as _i896;
 import '../../features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart'
     as _i828;
+import '../../features/individuals/features/job_preferences/data/datasources/job_preferences_remote_datasource.dart'
+    as _i466;
+import '../../features/individuals/features/job_preferences/data/repositories/job_preferences_repository_impl.dart'
+    as _i942;
+import '../../features/individuals/features/job_preferences/domain/repositories/job_preferences_repository.dart'
+    as _i248;
+import '../../features/individuals/features/job_preferences/domain/usecases/get_job_preferences_usecase.dart'
+    as _i43;
+import '../../features/individuals/features/job_preferences/domain/usecases/update_job_preferences_usecase.dart'
+    as _i476;
+import '../../features/individuals/features/job_preferences/presentation/cubit/job_preferences_cubit.dart'
+    as _i387;
 import '../../features/individuals/features/skills_languages/data/datasources/skills_languages_remote_data_source.dart'
     as _i354;
 import '../../features/individuals/features/skills_languages/data/repositories/profile_repository_impl.dart'
@@ -160,6 +172,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i380.EducationRemoteDataSource>(
       () => _i380.EducationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
+    gh.lazySingleton<_i466.JobPreferencesRemoteDataSource>(
+      () =>
+          _i466.JobPreferencesRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
     gh.lazySingleton<_i1047.DeleteAboutMeVideoUseCase>(
       () => _i1047.DeleteAboutMeVideoUseCase(gh<_i542.AboutMeRepository>()),
     );
@@ -196,6 +212,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
       () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i248.JobPreferencesRepository>(
+      () => _i942.JobPreferencesRepositoryImpl(
+        gh<_i466.JobPreferencesRemoteDataSource>(),
+      ),
     );
     gh.factory<_i468.RegisterCompany>(
       () => companyModule.registerCompany(gh<_i786.CompanyRepository>()),
@@ -267,6 +288,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i781.AboutMeCubit(
         gh<_i250.SaveAboutMeUseCase>(),
         gh<_i1047.DeleteAboutMeVideoUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i43.GetJobPreferencesUseCase>(
+      () => _i43.GetJobPreferencesUseCase(gh<_i248.JobPreferencesRepository>()),
+    );
+    gh.lazySingleton<_i476.UpdateJobPreferencesUseCase>(
+      () => _i476.UpdateJobPreferencesUseCase(
+        gh<_i248.JobPreferencesRepository>(),
+      ),
+    );
+    gh.factory<_i387.JobPreferencesCubit>(
+      () => _i387.JobPreferencesCubit(
+        gh<_i43.GetJobPreferencesUseCase>(),
+        gh<_i476.UpdateJobPreferencesUseCase>(),
       ),
     );
     gh.lazySingleton<_i591.BasicInfoRepository>(
