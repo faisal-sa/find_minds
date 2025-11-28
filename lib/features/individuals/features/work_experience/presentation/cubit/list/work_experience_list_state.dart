@@ -14,6 +14,18 @@ class WorkExperienceListState extends Equatable {
     this.errorMessage,
   });
 
+  WorkExperienceListState copyWith({
+    ListStatus? status,
+    List<WorkExperience>? experiences,
+    String? errorMessage,
+  }) {
+    return WorkExperienceListState(
+      status: status ?? this.status,
+      experiences: experiences ?? this.experiences,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
   @override
   List<Object?> get props => [status, experiences, errorMessage];
 }

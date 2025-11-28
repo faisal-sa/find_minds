@@ -14,6 +14,18 @@ class EducationListState extends Equatable {
     this.errorMessage,
   });
 
+  EducationListState copyWith({
+    ListStatus? status,
+    List<Education>? educations,
+    String? errorMessage,
+  }) {
+    return EducationListState(
+      status: status ?? this.status,
+      educations: educations ?? this.educations,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
   @override
   List<Object?> get props => [status, educations, errorMessage];
 }

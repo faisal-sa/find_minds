@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/usecases/add_certification_usecase.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/usecases/update_certification_usecase.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/form/certification_form_state.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/form/work_experience_form_state.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable

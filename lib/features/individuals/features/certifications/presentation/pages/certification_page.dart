@@ -32,7 +32,12 @@ class CertificationPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
-            onPressed: () => AddCertificationModal.show(context, null),
+            onPressed: () async {
+              final result = await AddCertificationModal.show(context, null);
+              if (result != null && context.mounted) {
+                context.read<CertificationListCubit>().addCertification(result);
+              }
+            },
             icon: const Icon(
               Icons.add_circle_outline,
               color: Color(0xFF3B82F6),
@@ -69,7 +74,17 @@ class CertificationPage extends StatelessWidget {
                     style: TextStyle(color: Colors.grey[500], fontSize: 16.sp),
                   ),
                   TextButton(
-                    onPressed: () => AddCertificationModal.show(context, null),
+                    onPressed: () async {
+                      final result = await AddCertificationModal.show(
+                        context,
+                        null,
+                      );
+                      if (result != null && context.mounted) {
+                        context.read<CertificationListCubit>().addCertification(
+                          result,
+                        );
+                      }
+                    },
                     child: const Text("Add a certification"),
                   ),
                 ],
@@ -88,7 +103,17 @@ class CertificationPage extends StatelessWidget {
                 onDelete: () => context
                     .read<CertificationListCubit>()
                     .deleteCertification(cert.id),
-                onEdit: () => AddCertificationModal.show(context, cert),
+                onEdit: () async {
+                  final result = await AddCertificationModal.show(
+                    context,
+                    cert,
+                  );
+                  if (result != null && context.mounted) {
+                    context.read<CertificationListCubit>().updateCertification(
+                      result,
+                    );
+                  }
+                },
               );
             },
           );

@@ -106,8 +106,7 @@ final GoRouter router = GoRouter(
                   builder: (context, state) {
                     return BlocProvider(
                       create: (context) =>
-                          serviceLocator.get<WorkExperienceListCubit>()
-                            ..loadExperiences(),
+                          serviceLocator.get<WorkExperienceListCubit>(),
                       child: const WorkExperienceListPage(),
                     );
                   },

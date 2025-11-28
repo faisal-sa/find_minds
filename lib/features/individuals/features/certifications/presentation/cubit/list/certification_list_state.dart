@@ -13,6 +13,18 @@ class CertificationListState extends Equatable {
     this.errorMessage,
   });
 
+  CertificationListState copyWith({
+    ListStatus? status,
+    List<Certification>? certifications,
+    String? errorMessage,
+  }) {
+    return CertificationListState(
+      status: status ?? this.status,
+      certifications: certifications ?? this.certifications,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
   @override
   List<Object?> get props => [status, certifications, errorMessage];
 }

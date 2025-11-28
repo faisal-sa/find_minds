@@ -5,11 +5,24 @@ import 'package:graduation_project/features/individuals/features/work_experience
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_state.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/add_work_experience_modal.dart';
-import 'package:intl/intl.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/experience_card.dart';
 
-//experience page shows a list of Experience cards, it relies on modal for editing and adding experienes
 class WorkExperienceListPage extends StatelessWidget {
   const WorkExperienceListPage({super.key});
+
+  Future<void> _handleExperienceResult(
+    BuildContext context,
+    WorkExperience? result, {
+    bool isUpdate = false,
+  }) async {
+    if (result != null && context.mounted) {
+      if (isUpdate) {
+        context.read<WorkExperienceListCubit>().updateExperience(result);
+      } else {
+        context.read<WorkExperienceListCubit>().addExperience(result);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +38,12 @@ class WorkExperienceListPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
-            onPressed: () => AddWorkExperienceModal.show(
-              context,
-              null,
-            ), // we pass null when adding, WorkExperience when editing
+            onPressed: () async {
+              final result = await AddWorkExperienceModal.show(context, null);
+              if (context.mounted) {
+                _handleExperienceResult(context, result);
+              }
+            },
             icon: const Icon(
               Icons.add_circle_outline,
               color: Color(0xFF3B82F6),
@@ -36,7 +51,6 @@ class WorkExperienceListPage extends StatelessWidget {
           ),
         ],
       ),
-
       body: BlocBuilder<WorkExperienceListCubit, WorkExperienceListState>(
         builder: (context, state) {
           if (state.status == ListStatus.loading) {
@@ -48,44 +62,37 @@ class WorkExperienceListPage extends StatelessWidget {
             );
           }
 
-          final experiences = state.experiences;
-
-          if (experiences.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.work_outline,
-                    size: 48.sp,
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    "No experience listed",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 16.sp),
-                  ),
-                  TextButton(
-                    onPressed: () => AddWorkExperienceModal.show(context, null),
-                    child: const Text("Add your first role"),
-                  ),
-                ],
-              ),
+          if (state.experiences.isEmpty) {
+            return _EmptyExperienceView(
+              onAdd: () async {
+                final result = await AddWorkExperienceModal.show(context, null);
+                if (context.mounted) {
+                  _handleExperienceResult(context, result);
+                }
+              },
             );
           }
 
           return ListView.separated(
             padding: EdgeInsets.all(24.w),
-            itemCount: experiences.length,
+            itemCount: state.experiences.length,
             separatorBuilder: (_, _) => SizedBox(height: 16.h),
             itemBuilder: (context, index) {
-              final exp = experiences[index];
-              return _ExperienceCard(
+              final exp = state.experiences[index];
+              return ExperienceCard(
                 experience: exp,
                 onDelete: () => context
                     .read<WorkExperienceListCubit>()
                     .deleteExperience(exp.id),
-                onEdit: () => AddWorkExperienceModal.show(context, exp),
+                onEdit: () async {
+                  final result = await AddWorkExperienceModal.show(
+                    context,
+                    exp,
+                  );
+                  if (context.mounted) {
+                    _handleExperienceResult(context, result, isUpdate: true);
+                  }
+                },
               );
             },
           );
@@ -95,133 +102,27 @@ class WorkExperienceListPage extends StatelessWidget {
   }
 }
 
-class _ExperienceCard extends StatelessWidget {
-  final WorkExperience experience;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
+class _EmptyExperienceView extends StatelessWidget {
+  final VoidCallback onAdd;
 
-  const _ExperienceCard({
-    required this.experience,
-    required this.onDelete,
-    required this.onEdit,
-  });
+  const _EmptyExperienceView({required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
-    final fmt = DateFormat('MMM yyyy');
-    final dateStr =
-        "${fmt.format(experience.startDate)} - ${experience.isCurrentlyWorking ? 'Present' : (experience.endDate != null ? fmt.format(experience.endDate!) : '')}";
-
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Content Column
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      experience.jobTitle,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      "${experience.companyName} • ${experience.employmentType}",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      dateStr,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Actions Row
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: onEdit,
-                    constraints: const BoxConstraints(), // Reduces padding
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    icon: Icon(
-                      Icons.edit_outlined,
-                      color: Colors.blue[400],
-                      size: 20.sp,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onDelete,
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.only(left: 8.w),
-                    icon: Icon(
-                      Icons.delete_outline,
-                      color: Colors.red[300],
-                      size: 20.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          Icon(Icons.work_outline, size: 48.sp, color: Colors.grey[300]),
+          SizedBox(height: 16.h),
+          Text(
+            "No experience listed",
+            style: TextStyle(color: Colors.grey[500], fontSize: 16.sp),
           ),
-          if (experience.responsibilities.isNotEmpty) ...[
-            Divider(height: 24.h, color: Colors.grey[100]),
-            ...experience.responsibilities.map(
-              (r) => Padding(
-                padding: EdgeInsets.only(bottom: 4.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 6.h),
-                      child: Icon(
-                        Icons.circle,
-                        size: 5.sp,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        r,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: Colors.grey[700],
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          TextButton(
+            onPressed: onAdd,
+            child: const Text("Add your first role"),
+          ),
         ],
       ),
     );

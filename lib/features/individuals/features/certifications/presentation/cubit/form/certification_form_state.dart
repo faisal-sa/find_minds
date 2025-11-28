@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/form/work_experience_form_state.dart';
+import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
 
 class CertificationFormState extends Equatable {
   final String name;
