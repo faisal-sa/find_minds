@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/custom_text_field.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/form_label.dart';
+import 'package:graduation_project/features/individuals/features/shared/widgets/shared_things.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
-import 'package:graduation_project/features/individuals/features/shared/widgets/date_selection_row.dart';
 import 'package:graduation_project/features/individuals/features/shared/widgets/dynamic_list_section.dart';
 import 'package:uuid/uuid.dart';
 
@@ -71,7 +71,7 @@ class _AddWorkExperienceModalState extends State<AddWorkExperienceModal> {
         _startDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Missing required fields"),
+          content: Text("Missing required fields (Title, Company, Start Date)"),
           backgroundColor: Colors.red,
         ),
       );
@@ -97,178 +97,109 @@ class _AddWorkExperienceModalState extends State<AddWorkExperienceModal> {
   Widget build(BuildContext context) {
     final isEditing = widget.experience != null;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+    return BaseFormSheet(
+      title: isEditing ? "Edit Experience" : "Add Experience",
+      submitLabel: isEditing ? "Save Changes" : "Save Experience",
+      onSubmit: _submit,
+      // BaseFormSheet handles the padding, scroll view, and sticky button
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Handle Bar
-          SizedBox(height: 12.h),
-          Container(
-            width: 40.w,
-            height: 4.h,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
+          const FormLabel("Job Title"),
+          CustomTextField(
+            hint: "e.g. Senior Product Designer",
+            controller: _jobTitleController,
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 16.h),
 
-          // Header
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  isEditing ? "Edit Experience" : "Add Experience",
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
+          const FormLabel("Company"),
+          CustomTextField(
+            hint: "e.g. Google",
+            icon: Icons.business,
+            controller: _companyNameController,
           ),
-          const Divider(),
+          SizedBox(height: 16.h),
 
-          // Scrollable Form Body
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const FormLabel("Job Title"),
-                  CustomTextField(
-                    hint: "e.g. Senior Product Designer",
-                    controller: _jobTitleController,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  const FormLabel("Company"),
-                  CustomTextField(
-                    hint: "e.g. Google",
-                    icon: Icons.business,
-                    controller: _companyNameController,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  const FormLabel("Employment Type"),
-                  DropdownButtonFormField<String>(
-                    value: _employmentType,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(color: Colors.grey[300]!),
-                      ),
-                    ),
-                    items: ['Full-time', 'Part-time', 'Contract', 'Freelance']
-                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                        .toList(),
-                    onChanged: (v) => setState(() => _employmentType = v!),
-                  ),
-                  SizedBox(height: 16.h),
-
-                  const FormLabel("Location"),
-                  CustomTextField(
-                    hint: "e.g. New York, USA",
-                    icon: Icons.location_on_outlined,
-                    controller: _locationController,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _isCurrentlyWorking,
-                        activeColor: Colors.black87,
-                        onChanged: (v) => setState(() {
-                          _isCurrentlyWorking = v ?? false;
-                          if (_isCurrentlyWorking) _endDate = null;
-                        }),
-                      ),
-                      Text(
-                        "I am currently working here",
-                        style: TextStyle(fontSize: 14.sp),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-
-                  DateSelectionRow(
-                    startDate: _startDate,
-                    endDate: _endDate,
-                    isCurrentlyWorking: _isCurrentlyWorking,
-                    onStartDateChanged: (d) => setState(() => _startDate = d),
-                    onEndDateChanged: (d) => setState(() => _endDate = d),
-                  ),
-                  SizedBox(height: 24.h),
-
-                  DynamicListSection(
-                    title: "Responsibilities",
-                    hintText: "Add key achievement...",
-                    items: _responsibilities,
-                    onChanged: (list) =>
-                        setState(() => _responsibilities = list),
-                  ),
-                  // Add extra padding for scroll comfort
-                  SizedBox(height: 100.h),
-                ],
+          const FormLabel("Employment Type"),
+          DropdownButtonFormField<String>(
+            value: _employmentType,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 14.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: Colors.grey[300]!),
               ),
             ),
+            items: [
+              'Full-time',
+              'Part-time',
+              'Contract',
+              'Freelance',
+            ].map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+            onChanged: (v) => setState(() => _employmentType = v!),
           ),
+          SizedBox(height: 16.h),
 
-          // Sticky Bottom Button
-          Container(
-            padding: EdgeInsets.all(24.w),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3B82F6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                    ),
-                  ),
-                  child: Text(
-                    isEditing ? "Save Changes" : "Save Experience",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+          const FormLabel("Location"),
+          CustomTextField(
+            hint: "e.g. New York, USA",
+            icon: Icons.location_on_outlined,
+            controller: _locationController,
+          ),
+          SizedBox(height: 16.h),
+
+          // Checkbox for Currently Working
+          Row(
+            children: [
+              Checkbox(
+                value: _isCurrentlyWorking,
+                activeColor: Colors.black87,
+                onChanged: (v) => setState(() {
+                  _isCurrentlyWorking = v ?? false;
+                  if (_isCurrentlyWorking) {
+                    _endDate = null;
+                  }
+                }),
               ),
-            ),
+              Text(
+                "I am currently working here",
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+
+          // Reusable Date Row
+          FormDateRow(
+            startLabel: "Start Date",
+            startDate: _startDate,
+            onStartChanged: (d) => setState(() => _startDate = d),
+            endLabel: "End Date",
+            // If working, pass null to clear visual selection or keep _endDate if you want to remember it
+            endDate: _isCurrentlyWorking ? null : _endDate,
+            // Change placeholder if currently working
+            endPlaceholder: _isCurrentlyWorking ? "Present" : "Select",
+            // If currently working, prevent changing the end date
+            onEndChanged: _isCurrentlyWorking
+                ? (_) {}
+                : (d) => setState(() => _endDate = d),
+          ),
+          SizedBox(height: 24.h),
+
+          DynamicListSection(
+            title: "Responsibilities",
+            hintText: "Add key achievement...",
+            items: _responsibilities,
+            onChanged: (list) => setState(() => _responsibilities = list),
           ),
         ],
       ),

@@ -24,6 +24,13 @@ class WorkExperienceListPage extends StatelessWidget {
     }
   }
 
+  Future<void> _openModal(BuildContext context, [WorkExperience? exp]) async {
+    final result = await AddWorkExperienceModal.show(context, exp);
+    if (context.mounted) {
+      _handleExperienceResult(context, result, isUpdate: exp != null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,12 +45,7 @@ class WorkExperienceListPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
-            onPressed: () async {
-              final result = await AddWorkExperienceModal.show(context, null);
-              if (context.mounted) {
-                _handleExperienceResult(context, result);
-              }
-            },
+            onPressed: () => _openModal(context),
             icon: const Icon(
               Icons.add_circle_outline,
               color: Color(0xFF3B82F6),
@@ -63,14 +65,7 @@ class WorkExperienceListPage extends StatelessWidget {
           }
 
           if (state.experiences.isEmpty) {
-            return _EmptyExperienceView(
-              onAdd: () async {
-                final result = await AddWorkExperienceModal.show(context, null);
-                if (context.mounted) {
-                  _handleExperienceResult(context, result);
-                }
-              },
-            );
+            return _EmptyExperienceView(onAdd: () => _openModal(context));
           }
 
           return ListView.separated(
@@ -84,15 +79,7 @@ class WorkExperienceListPage extends StatelessWidget {
                 onDelete: () => context
                     .read<WorkExperienceCubit>()
                     .deleteExperience(exp.id),
-                onEdit: () async {
-                  final result = await AddWorkExperienceModal.show(
-                    context,
-                    exp,
-                  );
-                  if (context.mounted) {
-                    _handleExperienceResult(context, result, isUpdate: true);
-                  }
-                },
+                onEdit: () => _openModal(context, exp),
               );
             },
           );
