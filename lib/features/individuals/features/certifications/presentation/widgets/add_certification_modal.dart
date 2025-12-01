@@ -337,15 +337,14 @@ class _TextField extends StatelessWidget {
   final IconData? icon;
   final Function(String)? onChanged;
   final TextEditingController? controller;
-  final String?
-  initialValue; // Added to support editing pre-fill without controller management
+  final String? initialValue;
 
   const _TextField({
+    this.controller,
     this.hint = '',
     this.icon,
     this.onChanged,
-    this.controller,
-    this.initialValue,
+    required this.initialValue,
   });
 
   @override

@@ -179,7 +179,7 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
                 const Gap(24),
                 _buildSectionHeader('Current Work Status'),
                 DropdownButtonFormField<String>(
-                  value: _currentWorkStatus,
+                  initialValue: _currentWorkStatus,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                   ),

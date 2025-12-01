@@ -24,12 +24,10 @@ import 'package:graduation_project/features/individuals/insights/presentation/pa
 import 'package:graduation_project/features/individuals/profile/presentation/cubit/profile_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/presentation/pages/profile_tab.dart';
 import 'package:graduation_project/features/individuals/navigation/pages/individuals_home_page.dart';
-import 'package:graduation_project/features/auth/presentation/pages/login_page.dart';
-import 'package:graduation_project/features/auth/presentation/pages/signup_page.dart';
-import 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
-
 import 'package:flutter/material.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
+import '../../features/CRinfo/cr_info_page.dart';
+import '../../features/payment/export_payment.dart';
 
 // keep it here for now
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -37,19 +35,42 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
+  initialLocation: '/pay',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const LoginPage()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE START ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
+    //
+
+    // ==================  Pay Page  =================== //
+    //
     GoRoute(
-      path: '/otp-verification',
+      path: '/pay',
+      builder: (context, state) => BlocProvider(
+        create: (_) => serviceLocator<PaymentCubit>(),
+        child: const PayPage(),
+      ),
+    ),
+
+    // ==================  Payment WebView (3DS Authentication)  =================== //
+    //
+    GoRoute(
+      path: '/payment-webview',
       builder: (context, state) {
-        final email = state.extra as String? ?? '';
-        return OTPVerificationPage(email: email);
+        final url = state.uri.queryParameters['url'] ?? '';
+        return PaymentWebViewPage(url: url);
       },
     ),
 
+    // ==================  CR Info Page  =================== //
+    //
+    GoRoute(
+      path: '/cr-info',
+      builder: (context, state) {
+        return const CrInfoPage(); //spalsh later page
+      },
+    ),
+
+    // ==================  Auth Routes  =================== //
+    //
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return MultiBlocProvider(
@@ -217,5 +238,8 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
+
+    //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE END ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
+    //
   ],
 );

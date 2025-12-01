@@ -35,6 +35,11 @@ dependencies:
   path: ^1.9.1
   dartz: ^0.10.1
   gap: ^3.0.1
+  dio: ^5.9.0
+  uuid: ^4.5.2
+  webview_flutter: ^4.13.0
+  flutter_credit_card: ^4.1.0
+  u_credit_card: ^1.4.0
 
 dev_dependencies:
   flutter_test:

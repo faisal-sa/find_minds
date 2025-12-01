@@ -140,6 +140,15 @@ import '../../features/individuals/features/work_experience/presentation/cubit/f
     as _i381;
 import '../../features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart'
     as _i620;
+import '../../features/payment/data/datasources/payment_remote_data_source.dart'
+    as _i811;
+import '../../features/payment/data/repositories/payment_repository_impl.dart'
+    as _i265;
+import '../../features/payment/domain/repositories/payment_repository.dart'
+    as _i639;
+import '../../features/payment/domain/usecases/process_payment_usecase.dart'
+    as _i432;
+import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
 import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
@@ -159,6 +168,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i171.UserCubit>(() => _i171.UserCubit());
     gh.lazySingleton<_i252.CompanyRemoteDataSource>(
       () => companyModule.provideRemoteDS(gh<_i454.SupabaseClient>()),
+    );
+    gh.lazySingleton<_i811.PaymentRemoteDataSource>(
+      () => _i811.PaymentRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i733.AboutMeRemoteDataSource>(
       () => _i733.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -217,6 +229,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i942.JobPreferencesRepositoryImpl(
         gh<_i466.JobPreferencesRemoteDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i639.PaymentRepository>(
+      () => _i265.PaymentRepositoryImpl(gh<_i811.PaymentRemoteDataSource>()),
     );
     gh.factory<_i468.RegisterCompany>(
       () => companyModule.registerCompany(gh<_i786.CompanyRepository>()),
@@ -298,6 +313,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i248.JobPreferencesRepository>(),
       ),
     );
+    gh.lazySingleton<_i432.ProcessPaymentUseCase>(
+      () => _i432.ProcessPaymentUseCase(gh<_i639.PaymentRepository>()),
+    );
     gh.factory<_i387.JobPreferencesCubit>(
       () => _i387.JobPreferencesCubit(
         gh<_i43.GetJobPreferencesUseCase>(),
@@ -342,6 +360,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i947.GetEducationsUseCase>(),
         gh<_i947.DeleteEducationUseCase>(),
       ),
+    );
+    gh.factory<_i513.PaymentCubit>(
+      () => _i513.PaymentCubit(gh<_i432.ProcessPaymentUseCase>()),
     );
     gh.factory<_i557.CertificationListCubit>(
       () => _i557.CertificationListCubit(

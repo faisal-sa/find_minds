@@ -261,7 +261,7 @@ class _WorkExperienceFormBodyState extends State<_WorkExperienceFormBody> {
         BlocBuilder<WorkExperienceFormCubit, WorkExperienceFormState>(
           buildWhen: (p, c) => p.employmentType != c.employmentType,
           builder: (context, state) => DropdownButtonFormField<String>(
-            value: state.employmentType,
+            initialValue: state.employmentType,
             decoration: _inputDeco(hint: "Select"),
             items: [
               'Full-time',

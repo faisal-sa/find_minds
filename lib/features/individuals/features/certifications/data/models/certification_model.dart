@@ -20,17 +20,15 @@ class CertificationModel extends Certification {
   @JsonKey(name: 'issuing_institution')
   final String issuingInstitutionModel;
 
-  CertificationModel({
-    required String id,
+  const CertificationModel({
+    required super.id,
     required this.userId,
-    required String name,
+    required super.name,
     required this.issuingInstitutionModel,
     required this.issueDateModel,
     this.expirationDateModel,
     this.credentialUrlModel,
   }) : super(
-         id: id,
-         name: name,
          issuingInstitution: issuingInstitutionModel,
          issueDate: issueDateModel,
          expirationDate: expirationDateModel,
