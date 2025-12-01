@@ -40,3 +40,23 @@ class JobPreferencesCubit extends Cubit<JobPreferencesState> {
     });
   }
 }
+
+
+// abstract class JobPreferencesState {}
+// class JobPreferencesInitial extends JobPreferencesState {}
+// class JobPreferencesLoading extends JobPreferencesState {}
+// class JobPreferencesLoaded extends JobPreferencesState {
+//   final JobPreferencesEntity preferences;
+//   JobPreferencesLoaded(this.preferences);
+// }
+// class JobPreferencesSaved extends JobPreferencesState {}
+// class JobPreferencesError extends JobPreferencesState {
+//   final String message;
+//   JobPreferencesError(this.message);
+// }
+
+// class JobPreferencesCubit extends Cubit<JobPreferencesState> {
+//   JobPreferencesCubit() : super(JobPreferencesInitial());
+//   void loadPreferences() { /* Load logic */ }
+//   void savePreferences(JobPreferencesEntity entity) { /* Save logic */ }
+// }

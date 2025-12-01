@@ -1,25 +1,27 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Assuming usage based on .w/.h
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
-import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/list/certification_list_cubit.dart';
-import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/list/certification_list_state.dart';
+import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_cubit.dart';
+import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_state.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/widgets/add_certification_modal.dart';
-import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_state.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/work_experience_state.dart';
+import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/custom_dashed_box.dart';
 import 'package:intl/intl.dart';
-// Import your domain/cubit files here
-
-// -----------------------------------------------------------------------------
-// PAGE
-// -----------------------------------------------------------------------------
 
 class CertificationPage extends StatelessWidget {
   const CertificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Extracted logic to avoid duplication
+    Future<void> handleAddCertification() async {
+      final result = await AddCertificationModal.show(context, null);
+      if (result != null && context.mounted) {
+        context.read<CertificationCubit>().addCertification(result);
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -32,7 +34,7 @@ class CertificationPage extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           IconButton(
-            onPressed: () => AddCertificationModal.show(context, null),
+            onPressed: handleAddCertification,
             icon: const Icon(
               Icons.add_circle_outline,
               color: Color(0xFF3B82F6),
@@ -40,7 +42,7 @@ class CertificationPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<CertificationListCubit, CertificationListState>(
+      body: BlocBuilder<CertificationCubit, CertificationState>(
         builder: (context, state) {
           if (state.status == ListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
@@ -54,25 +56,14 @@ class CertificationPage extends StatelessWidget {
           final list = state.certifications;
 
           if (list.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.workspace_premium_outlined, // Changed Icon
-                    size: 48.sp,
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    "No certifications listed",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 16.sp),
-                  ),
-                  TextButton(
-                    onPressed: () => AddCertificationModal.show(context, null),
-                    child: const Text("Add a certification"),
-                  ),
-                ],
+            return Padding(
+              padding: EdgeInsets.all(24.w),
+              child: Center(
+                child: EmptyStateView(
+                  icon: Icons.workspace_premium_outlined,
+                  message: "No certifications listed.\nTap to add one.",
+                  onTap: handleAddCertification,
+                ),
               ),
             );
           }
@@ -86,9 +77,19 @@ class CertificationPage extends StatelessWidget {
               return _CertificationCard(
                 certification: cert,
                 onDelete: () => context
-                    .read<CertificationListCubit>()
+                    .read<CertificationCubit>()
                     .deleteCertification(cert.id),
-                onEdit: () => AddCertificationModal.show(context, cert),
+                onEdit: () async {
+                  final result = await AddCertificationModal.show(
+                    context,
+                    cert,
+                  );
+                  if (result != null && context.mounted) {
+                    context.read<CertificationCubit>().updateCertification(
+                      result,
+                    );
+                  }
+                },
               );
             },
           );
@@ -99,7 +100,7 @@ class CertificationPage extends StatelessWidget {
 }
 
 // -----------------------------------------------------------------------------
-// CARD COMPONENT
+// CARD COMPONENT (Unchanged)
 // -----------------------------------------------------------------------------
 
 class _CertificationCard extends StatelessWidget {
@@ -117,7 +118,6 @@ class _CertificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final fmt = DateFormat('MMM yyyy');
 
-    // Logic for date display: "Issued: Jan 2023" or "Jan 2023 - Jan 2025"
     String dateStr = "Issued ${fmt.format(certification.issueDate)}";
     if (certification.expirationDate != null) {
       dateStr =

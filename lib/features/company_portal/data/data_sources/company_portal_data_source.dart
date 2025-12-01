@@ -90,7 +90,7 @@ class CompanyRemoteDataSource {
 
       final recordExists = companyResponse != null;
       final rawCompanyName = recordExists
-          ? companyResponse!['company_name'] as String?
+          ? companyResponse['company_name'] as String?
           : null;
 
       // Trim whitespace and check if the name is NOT empty

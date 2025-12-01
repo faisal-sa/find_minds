@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   final String label;
   final String hint;
-  final String? initialValue;
-  final Function(String) onChanged;
+  final TextEditingController controller;
   final TextInputType keyboardType;
 
   const CustomTextField({
     super.key,
     required this.label,
     required this.hint,
-    required this.onChanged,
-    this.initialValue,
+    required this.controller,
     this.keyboardType = TextInputType.text,
   });
 
@@ -31,8 +29,7 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          initialValue: initialValue,
-          onChanged: onChanged,
+          controller: controller,
           keyboardType: keyboardType,
           style: const TextStyle(color: Color(0xFF334155)),
           decoration: InputDecoration(

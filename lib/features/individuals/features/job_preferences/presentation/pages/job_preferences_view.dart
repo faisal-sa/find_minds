@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:graduation_project/app/widgets/custom_text_field.dart';
+import 'package:graduation_project/app/widgets/saving_button.dart';
+import 'package:graduation_project/features/individuals/features/shared/widgets/dynamic_list_section.dart';
 import '../../domain/entities/job_preferences_entity.dart';
 import '../cubit/job_preferences_cubit.dart';
 
@@ -14,8 +17,6 @@ class JobPreferencesView extends StatefulWidget {
 class _JobPreferencesViewState extends State<JobPreferencesView> {
   final _formKey = GlobalKey<FormState>();
 
-  // Form Controllers
-  final TextEditingController _roleController = TextEditingController();
   final TextEditingController _minSalaryController = TextEditingController();
   final TextEditingController _maxSalaryController = TextEditingController();
   final TextEditingController _noticePeriodController = TextEditingController();
@@ -24,13 +25,12 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
   List<String> _targetRoles = [];
   List<String> _employmentTypes = [];
   List<String> _workModes = [];
-  String? _currentWorkStatus;
-  String _salaryCurrency = 'USD';
+
+  final String _salaryCurrency = 'SAR';
   bool _canRelocate = false;
   bool _canStartImmediately = false;
 
-  // Constants for Dropdowns/Chips
-  final List<String> _availableWorkModes = ['Remote', 'Onsite', 'Hybrid'];
+  final List<String> _availableWorkModes = ['Remote', 'On-site', 'Hybrid'];
   final List<String> _availableEmpTypes = [
     'Full-time',
     'Part-time',
@@ -38,34 +38,21 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
     'Freelance',
     'Co-op',
   ];
-  final List<String> _workStatuses = [
-    'Open to work',
-    'Actively applying',
-    'Not looking',
-    'Casual browsing',
-  ];
-  final List<String> _currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
 
   @override
   void dispose() {
-    _roleController.dispose();
     _minSalaryController.dispose();
     _maxSalaryController.dispose();
     _noticePeriodController.dispose();
     super.dispose();
   }
 
-  /// Initialize local state from the loaded entity
   void _initializeValues(JobPreferencesEntity prefs) {
     _targetRoles = List.from(prefs.targetRoles);
     _employmentTypes = List.from(prefs.employmentTypes);
     _workModes = List.from(prefs.workModes);
-
     _minSalaryController.text = prefs.minSalary?.toString() ?? '';
     _maxSalaryController.text = prefs.maxSalary?.toString() ?? '';
-    _salaryCurrency = prefs.salaryCurrency ?? 'USD';
-
-    _currentWorkStatus = prefs.currentWorkStatus;
     _canRelocate = prefs.canRelocate;
     _canStartImmediately = prefs.canStartImmediately;
     _noticePeriodController.text = prefs.noticePeriodDays?.toString() ?? '';
@@ -78,14 +65,14 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
         minSalary: int.tryParse(_minSalaryController.text),
         maxSalary: int.tryParse(_maxSalaryController.text),
         salaryCurrency: _salaryCurrency,
-        currentWorkStatus: _currentWorkStatus,
         employmentTypes: _employmentTypes,
         workModes: _workModes,
         canRelocate: _canRelocate,
         canStartImmediately: _canStartImmediately,
-        noticePeriodDays: int.tryParse(_noticePeriodController.text),
+        noticePeriodDays: _canStartImmediately
+            ? int.tryParse(_noticePeriodController.text)
+            : null,
       );
-
       context.read<JobPreferencesCubit>().savePreferences(entity);
     }
   }
@@ -101,18 +88,14 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
               backgroundColor: Colors.green,
             ),
           );
-        } else if (state is JobPreferencesError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
-          );
         } else if (state is JobPreferencesLoaded) {
-          // Sync local state when data loads from DB
           setState(() {
             _initializeValues(state.preferences);
           });
         }
       },
       builder: (context, state) {
+        // Move loading check to button or overlay if you want to keep form visible
         if (state is JobPreferencesLoading) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -124,156 +107,78 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionHeader('Target Roles'),
-                _buildRoleInput(),
-                const Gap(8),
-                Wrap(
-                  spacing: 8,
-                  children: _targetRoles.map((role) {
-                    return Chip(
-                      label: Text(role),
-                      onDeleted: () {
-                        setState(() {
-                          _targetRoles.remove(role);
-                        });
-                      },
-                    );
-                  }).toList(),
+                // 1. REUSED: DynamicListSection
+                // Replaces _buildLabel, _roleController, _buildRoleInput, and the Chips Wrap
+                DynamicListSection(
+                  title: 'Target Role',
+                  hintText: 'e.g., Software Engineer',
+                  items: _targetRoles,
+                  onChanged: (values) => setState(() => _targetRoles = values),
                 ),
 
                 const Gap(24),
-                _buildSectionHeader('Salary Expectations (Annual)'),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _minSalaryController,
-                        decoration: const InputDecoration(labelText: 'Min'),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const Gap(16),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _maxSalaryController,
-                        decoration: const InputDecoration(labelText: 'Max'),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const Gap(16),
-                    DropdownButton<String>(
-                      value: _currencies.contains(_salaryCurrency)
-                          ? _salaryCurrency
-                          : _currencies.first,
-                      items: _currencies
-                          .map(
-                            (c) => DropdownMenuItem(value: c, child: Text(c)),
-                          )
-                          .toList(),
-                      onChanged: (val) =>
-                          setState(() => _salaryCurrency = val!),
-                    ),
-                  ],
+                _buildLabel('Salary Expectations'),
+                // Note: Kept custom _buildSalaryRow because your CustomTextField
+                // doesn't support suffixText ('/mo') or Widget prefixes currently.
+                _buildSalaryRow(),
+
+                const Gap(24),
+                _buildLabel('Work Environment'),
+                _buildSelectionChips(
+                  options: _availableWorkModes,
+                  selectedValues: _workModes,
+                  onSelect: (val) => setState(() {
+                    _workModes.contains(val)
+                        ? _workModes.remove(val)
+                        : _workModes.add(val);
+                  }),
                 ),
 
                 const Gap(24),
-                _buildSectionHeader('Current Work Status'),
-                DropdownButtonFormField<String>(
-                  value: _currentWorkStatus,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _workStatuses
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _currentWorkStatus = val),
+                _buildLabel('Employment Type'),
+                _buildSelectionChips(
+                  options: _availableEmpTypes,
+                  selectedValues: _employmentTypes,
+                  onSelect: (val) => setState(() {
+                    _employmentTypes.contains(val)
+                        ? _employmentTypes.remove(val)
+                        : _employmentTypes.add(val);
+                  }),
                 ),
 
                 const Gap(24),
-                _buildSectionHeader('Work Environment'),
-                Wrap(
-                  spacing: 8,
-                  children: _availableWorkModes.map((mode) {
-                    final isSelected = _workModes.contains(mode);
-                    return FilterChip(
-                      label: Text(mode),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          selected
-                              ? _workModes.add(mode)
-                              : _workModes.remove(mode);
-                        });
-                      },
-                    );
-                  }).toList(),
+                buildSwitchTile(
+                  title: 'Open to relocation',
+                  value: _canRelocate,
+                  onChanged: (val) => setState(() => _canRelocate = val),
                 ),
 
                 const Gap(16),
-                _buildSectionHeader('Employment Type'),
-                Wrap(
-                  spacing: 8,
-                  children: _availableEmpTypes.map((type) {
-                    final isSelected = _employmentTypes.contains(type);
-                    return FilterChip(
-                      label: Text(type),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          selected
-                              ? _employmentTypes.add(type)
-                              : _employmentTypes.remove(type);
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-
-                const Gap(24),
-                _buildSectionHeader('Availability'),
-                SwitchListTile(
-                  title: const Text('Open to Relocation'),
-                  value: _canRelocate,
-                  onChanged: (val) => setState(() => _canRelocate = val),
-                  contentPadding: EdgeInsets.zero,
-                ),
-                SwitchListTile(
-                  title: const Text('Can Start Immediately'),
+                buildSwitchTile(
+                  title: 'Can start immediately',
                   value: _canStartImmediately,
                   onChanged: (val) =>
                       setState(() => _canStartImmediately = val),
-                  contentPadding: EdgeInsets.zero,
                 ),
 
-                // Only show Notice Period if NOT starting immediately
-                if (!_canStartImmediately) ...[
-                  const Gap(8),
-                  TextFormField(
+                if (_canStartImmediately) ...[
+                  const Gap(24),
+                  CustomTextField(
+                    label: 'Notice Period',
+                    hint: 'e.g., 2 weeks',
                     controller: _noticePeriodController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notice Period (Days)',
-                      border: OutlineInputBorder(),
-                      helperText: 'How many days before you can join?',
-                    ),
-                    keyboardType: TextInputType.number,
                   ),
                 ],
 
-                const Gap(32),
-                SizedBox(
-                  width: double.infinity,
+                const Gap(40),
+
+                SavingButton(
+                  text: 'Save Preferences',
+                  //pass isLoading: state is JobPreferencesLoading here
+                  onPressed: _onSave,
+                  backgroundColor: const Color(0xFF4285F4),
+                  padding: EdgeInsets.zero,
                   height: 50,
-                  child: ElevatedButton(
-                    onPressed: _onSave,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text(
-                      'Save Preferences',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
                 ),
                 const Gap(24),
               ],
@@ -283,49 +188,187 @@ class _JobPreferencesViewState extends State<JobPreferencesView> {
       },
     );
   }
+  // --- Helper Widgets ---
 
-  Widget _buildRoleInput() {
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF5F6368), // Dark grey
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSalaryRow() {
     return Row(
       children: [
         Expanded(
-          child: TextField(
-            controller: _roleController,
-            decoration: const InputDecoration(
-              hintText: 'e.g. Senior Flutter Developer',
-              border: OutlineInputBorder(),
-              isDense: true,
-            ),
-            onSubmitted: (_) => _addRole(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Minimum Salary",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              const Gap(4),
+              TextFormField(
+                controller: _minSalaryController,
+                keyboardType: TextInputType.number,
+                decoration: _inputDecoration(
+                  hint: 'e.g., 5,000',
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(14.0),
+                    child: Text(
+                      '\$',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                  suffixText: '/mo', // Per month request
+                ),
+              ),
+            ],
           ),
         ),
-        const Gap(8),
-        IconButton(
-          onPressed: _addRole,
-          icon: const Icon(Icons.add_circle),
-          color: Theme.of(context).primaryColor,
-          iconSize: 32,
+        const Gap(16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Maximum Salary",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              const Gap(4),
+              TextFormField(
+                controller: _maxSalaryController,
+                keyboardType: TextInputType.number,
+                decoration: _inputDecoration(
+                  hint: 'e.g., 8,000',
+                  prefixIcon: const Padding(
+                    padding: EdgeInsets.all(14.0),
+                    child: Text(
+                      '\$',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ),
+                  suffixText: '/mo',
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  void _addRole() {
-    final text = _roleController.text.trim();
-    if (text.isNotEmpty && !_targetRoles.contains(text)) {
-      setState(() {
-        _targetRoles.add(text);
-        _roleController.clear();
-      });
-    }
+  Widget _buildSelectionChips({
+    required List<String> options,
+    required List<String> selectedValues,
+    required Function(String) onSelect,
+  }) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: options.map((option) {
+        final isSelected = selectedValues.contains(option);
+        return InkWell(
+          onTap: () => onSelect(option),
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFF4285F4)
+                    : Colors.grey.shade300,
+                width: isSelected ? 1.5 : 1,
+              ),
+            ),
+            child: Text(
+              option,
+              style: TextStyle(
+                color: isSelected
+                    ? const Color(0xFF4285F4)
+                    : Colors.grey.shade700,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  Widget buildSwitchTile({
+    required String title,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        // Simulating the card look from the screenshot
+        border: Border.all(color: Colors.white),
       ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Color(0xFF3C4043),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeThumbColor: Colors.white,
+            activeTrackColor: const Color(0xFF4285F4),
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: Colors.grey.shade300,
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    String? hint,
+    Widget? prefixIcon,
+    String? suffixText,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade400),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      prefixIcon: prefixIcon,
+      suffixText: suffixText,
+      suffixStyle: const TextStyle(color: Colors.grey),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: Color(0xFF4285F4), width: 1.5),
+      ),
+      filled: true,
+      fillColor: Colors.white,
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/exports/app_exports.dart';
 
 class CompanyBookmarksPage extends StatelessWidget {

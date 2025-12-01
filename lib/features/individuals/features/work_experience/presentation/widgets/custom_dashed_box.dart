@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomDashedBox extends StatelessWidget {
   final Widget child;
@@ -76,4 +77,61 @@ class _DashedBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DashedBorderPainter oldDelegate) => false;
+}
+
+
+class EmptyStateView extends StatelessWidget {
+  final IconData icon;
+  final String message;
+  final VoidCallback? onTap;
+
+  const EmptyStateView({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      // Optional padding around the dashed box itself
+      padding: EdgeInsets.symmetric(horizontal: 0.w), 
+      child: CustomDashedBox(
+        color: Colors.grey[300]!,
+        gap: 6,
+        strokeWidth: 1.5,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 20.w),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 48.sp,
+                  color: Colors.grey[300],
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

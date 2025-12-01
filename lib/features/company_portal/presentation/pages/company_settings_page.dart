@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/exports/app_exports.dart';
 
 class CompanySettingsPage extends StatelessWidget {

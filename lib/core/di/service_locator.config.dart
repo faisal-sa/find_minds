@@ -84,10 +84,8 @@ import '../../features/individuals/features/certifications/domain/usecases/get_c
     as _i440;
 import '../../features/individuals/features/certifications/domain/usecases/update_certification_usecase.dart'
     as _i860;
-import '../../features/individuals/features/certifications/presentation/cubit/form/certification_form_cubit.dart'
-    as _i121;
-import '../../features/individuals/features/certifications/presentation/cubit/list/certification_list_cubit.dart'
-    as _i557;
+import '../../features/individuals/features/certifications/presentation/cubit/certification_cubit.dart'
+    as _i848;
 import '../../features/individuals/features/education/data/datasources/education_remote_data_source.dart'
     as _i380;
 import '../../features/individuals/features/education/data/repositories/education_repository_impl.dart'
@@ -102,10 +100,8 @@ import '../../features/individuals/features/education/domain/usecases/get_educat
     as _i947;
 import '../../features/individuals/features/education/domain/usecases/update_education_usecase.dart'
     as _i906;
-import '../../features/individuals/features/education/presentation/cubit/form/education_form_cubit.dart'
-    as _i896;
-import '../../features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart'
-    as _i828;
+import '../../features/individuals/features/education/presentation/cubit/education_cubit.dart'
+    as _i803;
 import '../../features/individuals/features/job_preferences/data/datasources/job_preferences_remote_datasource.dart'
     as _i466;
 import '../../features/individuals/features/job_preferences/data/repositories/job_preferences_repository_impl.dart'
@@ -140,10 +136,8 @@ import '../../features/individuals/features/work_experience/domain/usecases/get_
     as _i786;
 import '../../features/individuals/features/work_experience/domain/usecases/update_work_experience_usecase.dart'
     as _i56;
-import '../../features/individuals/features/work_experience/presentation/cubit/form/work_experience_form_cubit.dart'
-    as _i381;
-import '../../features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart'
-    as _i620;
+import '../../features/individuals/features/work_experience/presentation/cubit/work_experience_cubit.dart'
+    as _i760;
 import '../../features/shared/user_cubit.dart' as _i171;
 import '../env_config/env_config.dart' as _i113;
 
@@ -242,6 +236,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i906.UpdateEducationUseCase>(
       () => _i906.UpdateEducationUseCase(gh<_i843.EducationRepository>()),
     );
+    gh.factory<_i803.EducationCubit>(
+      () => _i803.EducationCubit(
+        gh<_i947.GetEducationsUseCase>(),
+        gh<_i947.DeleteEducationUseCase>(),
+        gh<_i965.AddEducationUseCase>(),
+        gh<_i906.UpdateEducationUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i320.CertificationRepository>(
       () => _i852.CertificationRepositoryImpl(
         gh<_i607.CertificationRemoteDataSource>(),
@@ -317,10 +319,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i591.BasicInfoRepository>(
       () => _i500.BasicInfoRepositoryImpl(gh<_i25.BasicInfoRemoteDataSource>()),
     );
-    gh.factory<_i896.EducationFormCubit>(
-      () => _i896.EducationFormCubit(
-        gh<_i965.AddEducationUseCase>(),
-        gh<_i906.UpdateEducationUseCase>(),
+    gh.factory<_i848.CertificationCubit>(
+      () => _i848.CertificationCubit(
+        gh<_i440.GetCertificationsUseCase>(),
+        gh<_i244.DeleteCertificationUseCase>(),
+        gh<_i289.AddCertificationUseCase>(),
+        gh<_i860.UpdateCertificationUseCase>(),
       ),
     );
     gh.lazySingleton<_i794.AddWorkExperienceUseCase>(
@@ -341,22 +345,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i651.WorkExperienceRepository>(),
       ),
     );
-    gh.factory<_i121.CertificationFormCubit>(
-      () => _i121.CertificationFormCubit(
-        gh<_i289.AddCertificationUseCase>(),
-        gh<_i860.UpdateCertificationUseCase>(),
-      ),
-    );
-    gh.factory<_i828.EducationListCubit>(
-      () => _i828.EducationListCubit(
-        gh<_i947.GetEducationsUseCase>(),
-        gh<_i947.DeleteEducationUseCase>(),
-      ),
-    );
-    gh.factory<_i557.CertificationListCubit>(
-      () => _i557.CertificationListCubit(
-        gh<_i440.GetCertificationsUseCase>(),
-        gh<_i244.DeleteCertificationUseCase>(),
+    gh.factory<_i760.WorkExperienceCubit>(
+      () => _i760.WorkExperienceCubit(
+        gh<_i786.GetWorkExperiencesUseCase>(),
+        gh<_i176.DeleteWorkExperienceUseCase>(),
+        gh<_i794.AddWorkExperienceUseCase>(),
+        gh<_i56.UpdateWorkExperienceUseCase>(),
       ),
     );
     gh.factory<_i111.GetCurrentUser>(
@@ -372,23 +366,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i975.VerifyOTP>(
       () => _i975.VerifyOTP(gh<_i787.AuthRepository>()),
     );
-    gh.factory<_i381.WorkExperienceFormCubit>(
-      () => _i381.WorkExperienceFormCubit(
-        gh<_i794.AddWorkExperienceUseCase>(),
-        gh<_i56.UpdateWorkExperienceUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i961.SaveBasicInfoUseCase>(
       () => _i961.SaveBasicInfoUseCase(gh<_i591.BasicInfoRepository>()),
     );
     gh.factory<_i37.BasicInfoCubit>(
       () => _i37.BasicInfoCubit(gh<_i961.SaveBasicInfoUseCase>()),
-    );
-    gh.factory<_i620.WorkExperienceListCubit>(
-      () => _i620.WorkExperienceListCubit(
-        gh<_i786.GetWorkExperiencesUseCase>(),
-        gh<_i176.DeleteWorkExperienceUseCase>(),
-      ),
     );
     gh.factory<_i117.AuthCubit>(
       () => _i117.AuthCubit(

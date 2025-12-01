@@ -82,10 +82,11 @@ class CompanyRepositoryImpl implements CompanyRepository {
   ) async {
     try {
       final data = await remote.getCompanyProfile(userId);
-      if (data == null)
+      if (data == null) {
         return Error(
           NotFoundFailure('Company profile not found for user ID: $userId'),
         );
+      }
 
       // Map Model to Entity
       final model = CompanyModelMapper.ensureInitialized().decodeMap(data);

@@ -39,3 +39,30 @@ class JobPreferencesEntity extends Equatable {
     noticePeriodDays,
   ];
 }
+
+
+// class JobPreferencesEntity {
+//   final List<String> targetRoles;
+//   final int? minSalary;
+//   final int? maxSalary;
+//   final String? salaryCurrency;
+//   final String? currentWorkStatus;
+//   final List<String> employmentTypes;
+//   final List<String> workModes;
+//   final bool canRelocate;
+//   final bool canStartImmediately;
+//   final int? noticePeriodDays; // Can be string depending on your DB, keeping int based on context
+
+//   JobPreferencesEntity({
+//     this.targetRoles = const [],
+//     this.minSalary,
+//     this.maxSalary,
+//     this.salaryCurrency,
+//     this.currentWorkStatus,
+//     this.employmentTypes = const [],
+//     this.workModes = const [],
+//     this.canRelocate = false,
+//     this.canStartImmediately = false,
+//     this.noticePeriodDays,
+//   });
+// }

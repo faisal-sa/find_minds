@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:graduation_project/app/widgets/saving_button.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
-import 'package:graduation_project/features/individuals/features/basic_info/presentation/widgets/custom_text_field.dart';
+import 'package:graduation_project/app/widgets/custom_text_field.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
 
-class BasicInfoPage extends StatelessWidget {
+class BasicInfoPage extends HookWidget {
   const BasicInfoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final currentUser = context.read<UserCubit>().state.user;
+
+    final firstNameCtrl = useTextEditingController(text: currentUser.firstName);
+    final lastNameCtrl = useTextEditingController(text: currentUser.lastName);
+    final jobTitleCtrl = useTextEditingController(text: currentUser.jobTitle);
+    final locationCtrl = useTextEditingController(text: currentUser.location);
+    final phoneCtrl = useTextEditingController(text: currentUser.phoneNumber);
+    final emailCtrl = useTextEditingController(text: currentUser.email);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -24,13 +34,14 @@ class BasicInfoPage extends StatelessWidget {
       body: BlocListener<BasicInfoCubit, BasicInfoState>(
         listener: (context, state) {
           if (state.status == FormStatus.success) {
+            final currentUser = context.read<UserCubit>().state.user;
             final updatedUser = currentUser.copyWith(
-              firstName: state.firstName,
-              lastName: state.lastName,
-              jobTitle: state.jobTitle,
-              phoneNumber: state.phoneNumber,
-              email: state.email,
-              location: state.location,
+              firstName: firstNameCtrl.text,
+              lastName: lastNameCtrl.text,
+              jobTitle: jobTitleCtrl.text,
+              phoneNumber: phoneCtrl.text,
+              email: emailCtrl.text,
+              location: locationCtrl.text,
             );
 
             context.read<UserCubit>().updateUser(updatedUser);
@@ -62,10 +73,7 @@ class BasicInfoPage extends StatelessWidget {
                     child: CustomTextField(
                       label: 'First Name',
                       hint: 'John',
-
-                      initialValue: currentUser.firstName,
-                      onChanged: (val) =>
-                          context.read<BasicInfoCubit>().firstNameChanged(val),
+                      controller: firstNameCtrl,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -73,9 +81,7 @@ class BasicInfoPage extends StatelessWidget {
                     child: CustomTextField(
                       label: 'Last Name',
                       hint: 'Doe',
-                      initialValue: currentUser.lastName,
-                      onChanged: (val) =>
-                          context.read<BasicInfoCubit>().lastNameChanged(val),
+                      controller: lastNameCtrl,
                     ),
                   ),
                 ],
@@ -84,61 +90,48 @@ class BasicInfoPage extends StatelessWidget {
               CustomTextField(
                 label: 'Job Title',
                 hint: 'Software Engineer',
-                initialValue: currentUser.jobTitle,
-                onChanged: (val) =>
-                    context.read<BasicInfoCubit>().jobTitleChanged(val),
+                controller: jobTitleCtrl,
               ),
               const SizedBox(height: 24),
               CustomTextField(
                 label: 'Location',
                 hint: 'New York, USA',
-                initialValue: currentUser.location,
-                onChanged: (val) =>
-                    context.read<BasicInfoCubit>().locationChanged(val),
+                controller: locationCtrl,
               ),
               const SizedBox(height: 24),
               CustomTextField(
                 label: 'Phone',
                 hint: '1234567890',
-                initialValue: currentUser.phoneNumber,
-                onChanged: (val) =>
-                    context.read<BasicInfoCubit>().phoneChanged(val),
+                controller: phoneCtrl,
               ),
               const SizedBox(height: 24),
               CustomTextField(
                 label: 'Email',
                 hint: 'email@example.com',
-                initialValue: currentUser.email,
-                onChanged: (val) =>
-                    context.read<BasicInfoCubit>().emailChanged(val),
+                controller: emailCtrl,
               ),
-
               const SizedBox(height: 48),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: BlocBuilder<BasicInfoCubit, BasicInfoState>(
-          builder: (context, state) {
-            return SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: state.status == FormStatus.loading
-                    ? null
-                    : () => context.read<BasicInfoCubit>().saveForm(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3B82F6),
-                ),
-                child: state.status == FormStatus.loading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Save', style: TextStyle(color: Colors.white)),
-              ),
-            );
-          },
-        ),
+      bottomNavigationBar: BlocBuilder<BasicInfoCubit, BasicInfoState>(
+        builder: (context, state) {
+          return SavingButton(
+            text: 'Save',
+            isLoading: state.status == FormStatus.loading,
+            onPressed: () {
+              context.read<BasicInfoCubit>().saveForm(
+                firstName: firstNameCtrl.text,
+                lastName: lastNameCtrl.text,
+                jobTitle: jobTitleCtrl.text,
+                phoneNumber: phoneCtrl.text,
+                email: emailCtrl.text,
+                location: locationCtrl.text,
+              );
+            },
+          );
+        },
       ),
     );
   }

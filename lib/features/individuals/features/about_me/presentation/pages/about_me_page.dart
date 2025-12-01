@@ -384,11 +384,7 @@ class _DashedBorderPainter extends CustomPainter {
   final double strokeWidth;
   final double gap;
 
-  _DashedBorderPainter({
-    required this.color,
-    this.strokeWidth = 1.0,
-    this.gap = 5.0,
-  });
+  _DashedBorderPainter({required this.color, this.gap = 5.0});
 
   @override
   void paint(Canvas canvas, Size size) {

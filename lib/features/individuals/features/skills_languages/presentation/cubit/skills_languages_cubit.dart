@@ -10,6 +10,9 @@ class SkillsLanguagesCubit extends Cubit<SkillsLanguagesState> {
 
   SkillsLanguagesCubit(this._repository) : super(SkillsLanguagesInitial());
 
+  void removeLanguage(String s) {}
+  void removeSkill(String s) {}
+
   Future<void> loadProfile() async {
     emit(SkillsLanguagesLoading());
     final result = await _repository.getData();

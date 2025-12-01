@@ -22,11 +22,11 @@ export 'package:graduation_project/features/individuals/features/basic_info/pres
 export 'package:graduation_project/features/individuals/features/basic_info/presentation/pages/basic_info_page.dart';
 
 // Individuals – Certifications
-export 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/list/certification_list_cubit.dart';
+export 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_cubit.dart';
 export 'package:graduation_project/features/individuals/features/certifications/presentation/pages/certification_page.dart';
 
 // Individuals – Education
-export 'package:graduation_project/features/individuals/features/education/presentation/cubit/list/education_list_cubit.dart';
+export 'package:graduation_project/features/individuals/features/education/presentation/cubit/education_cubit.dart';
 export 'package:graduation_project/features/individuals/features/education/presentation/pages/education_page.dart';
 
 // Individuals – Job Preferences
@@ -36,7 +36,7 @@ export 'package:graduation_project/features/individuals/features/job_preferences
 export 'package:graduation_project/features/individuals/features/skills_languages/presentation/pages/skills_page.dart';
 
 // Individuals – Work Experience
-export 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/list/work_experience_list_cubit.dart';
+export 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/work_experience_cubit.dart';
 export 'package:graduation_project/features/individuals/features/work_experience/presentation/pages/work_experience_list_page.dart';
 
 // Individuals – Insights

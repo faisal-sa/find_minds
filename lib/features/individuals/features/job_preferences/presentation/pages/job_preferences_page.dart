@@ -10,7 +10,13 @@ class JobPreferencesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Job Preferences')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Job Preferences'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
       body: BlocProvider(
         create: (context) =>
             serviceLocator<JobPreferencesCubit>()..loadPreferences(),

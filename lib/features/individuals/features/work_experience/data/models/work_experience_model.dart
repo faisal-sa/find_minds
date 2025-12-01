@@ -31,6 +31,7 @@ class WorkExperienceModel extends WorkExperience {
 
   Map<String, dynamic> toJson({required String userId}) {
     return {
+      'id': id,
       'user_id': userId,
       'job_title': jobTitle,
       'company_name': companyName,
