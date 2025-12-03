@@ -1,8 +1,7 @@
-// lib/features/company_portal/data/repositories/company_repository_impl.dart
-
 import 'package:graduation_project/features/company_portal/data/data_sources/company_portal_data_source.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
+
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/candidate_entity.dart';
 import '../../domain/entities/company_entity.dart';
@@ -10,7 +9,6 @@ import '../../domain/repositories/company_portal_repository.dart';
 import '../models/candidate_model.dart';
 import '../models/company_model.dart';
 
-// Error Mapping Function
 Failure _mapExceptionToFailure(Exception e) {
   if (e is SupabaseException) {
     if (e.message.contains('not found') || e.message.contains('single row')) {
@@ -23,7 +21,6 @@ Failure _mapExceptionToFailure(Exception e) {
     if (e.message.contains('authentication')) {
       return AuthenticationFailure(e.message);
     }
-    // Handle specific verification failure messages if necessary
     return ServerFailure(e.message);
   }
   return UnknownFailure(e.toString());
@@ -32,12 +29,9 @@ Failure _mapExceptionToFailure(Exception e) {
 @Injectable(as: CompanyRepository)
 class CompanyRepositoryImpl implements CompanyRepository {
   final CompanyRemoteDataSource remote;
-
   CompanyRepositoryImpl(this.remote);
 
-  // Helper method for converting Entity to the Map required by the Data Source
   Map<String, dynamic> _entityToMap(CompanyEntity entity) {
-    // Only return fields that should be updated in the database
     return {
       'company_name': entity.companyName,
       'industry': entity.industry,
@@ -59,7 +53,6 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }) async {
     try {
       final data = await remote.registerCompany(email, password);
-      // Ensure the decoding is safe.
       final model = CompanyModelMapper.ensureInitialized().decodeMap(data);
       return Success(model.toEntity());
     } on Exception catch (e) {
@@ -73,10 +66,11 @@ class CompanyRepositoryImpl implements CompanyRepository {
   ) async {
     try {
       final data = await remote.getCompanyProfile(userId);
-      if (data == null)
+      if (data == null) {
         return Error(
           NotFoundFailure('Company profile not found for user ID: $userId'),
         );
+      }
       final model = CompanyModelMapper.ensureInitialized().decodeMap(data);
       return Success(model.toEntity());
     } on Exception catch (e) {
@@ -93,7 +87,6 @@ class CompanyRepositoryImpl implements CompanyRepository {
       final updatePayload = _entityToMap(company);
 
       final updatedData = await remote.updateCompanyProfile(updatePayload);
-
       final CompanyModel updatedModel = CompanyModelMapper.ensureInitialized()
           .decodeMap(updatedData);
       return Success(updatedModel.toEntity());
@@ -139,6 +132,19 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }
 
   @override
+  Future<Result<void, Failure>> removeCandidateBookmark(
+    String companyId,
+    String candidateId,
+  ) async {
+    try {
+      await remote.removeCandidateBookmark(companyId, candidateId);
+      return const Success(null);
+    } on Exception catch (e) {
+      return Error(_mapExceptionToFailure(e));
+    }
+  }
+
+  @override
   Future<Result<List<CandidateEntity>, Failure>> getCompanyBookmarks(
     String companyId,
   ) async {
@@ -177,7 +183,6 @@ class CompanyRepositoryImpl implements CompanyRepository {
     }
   }
 
-  // --- NEW METHOD FOR QR VERIFICATION ---
   @override
   Future<Result<void, Failure>> verifyCompanyQR(String qrCodeData) async {
     try {

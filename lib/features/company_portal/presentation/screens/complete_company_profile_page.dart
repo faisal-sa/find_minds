@@ -74,7 +74,9 @@ class CompleteCompanyProfilePage extends StatelessWidget {
           updatedAt: DateTime.now(),
         );
 
-        context.read<CompanyBloc>().add(UpdateCompanyProfileEvent(updated));
+        context.read<CompanyBloc>().add(
+          UpdateCompanyProfileEvent(company: updated),
+        );
       }
     }
 
@@ -190,7 +192,7 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       hintText: 'Select Company Size',
                     ),
-                    value: selectedSize,
+                    initialValue: selectedSize,
                     items: sizeOptions
                         .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                         .toList(),

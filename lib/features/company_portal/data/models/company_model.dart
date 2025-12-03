@@ -62,6 +62,7 @@ class CompanyModel with CompanyModelMappable {
     updatedAt: DateTime.tryParse(updatedAt) ?? DateTime(1970),
   );
 
+  @override
   Map<String, dynamic> toMap() =>
       CompanyModelMapper.ensureInitialized().encodeMap(this);
 }

@@ -1,4 +1,3 @@
-// lib/features/company_portal/presentation/bloc/company_event.dart
 part of 'company_bloc.dart';
 
 abstract class CompanyEvent extends Equatable {
@@ -24,9 +23,11 @@ class RegisterCompanyEvent extends CompanyEvent {
 
 class UpdateCompanyProfileEvent extends CompanyEvent {
   final CompanyEntity company;
-  const UpdateCompanyProfileEvent(this.company);
+
+  const UpdateCompanyProfileEvent({required this.company});
+
   @override
-  List<Object?> get props => [company];
+  List<Object> get props => [company];
 }
 
 class SearchCandidatesEvent extends CompanyEvent {

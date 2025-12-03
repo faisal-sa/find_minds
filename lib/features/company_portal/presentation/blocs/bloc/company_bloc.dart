@@ -8,10 +8,10 @@ import 'package:graduation_project/features/company_portal/domain/usecases/add_c
 import 'package:graduation_project/features/company_portal/domain/usecases/check_company_status.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/get_company_bookmarks.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/get_company_profile.dart';
-import 'package:graduation_project/features/company_portal/domain/usecases/register_company.dart'; // NEW IMPORT
+import 'package:graduation_project/features/company_portal/domain/usecases/register_company.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/search_candidates.dart';
 import 'package:graduation_project/features/company_portal/domain/usecases/update_company_profile.dart';
-import 'package:graduation_project/features/company_portal/domain/usecases/verify_company_qr.dart'; // NEW IMPORT
+import 'package:graduation_project/features/company_portal/domain/usecases/verify_company_qr.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -26,8 +26,8 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
   final AddCandidateBookmark _addCandidateBookmark;
   final GetCompanyBookmarks _getCompanyBookmarks;
   final CheckCompanyStatus _checkCompanyStatus;
-  final RegisterCompany _registerCompany; // NEW INJECTION
-  final VerifyCompanyQR _verifyCompanyQR; // NEW INJECTION
+  final RegisterCompany _registerCompany;
+  final VerifyCompanyQR _verifyCompanyQR;
 
   CompanyBloc(
     this._getCompanyProfile,
@@ -36,8 +36,8 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     this._addCandidateBookmark,
     this._getCompanyBookmarks,
     this._checkCompanyStatus,
-    this._registerCompany, // ADDED
-    this._verifyCompanyQR, // ADDED
+    this._registerCompany,
+    this._verifyCompanyQR,
   ) : super(const CompanyInitial()) {
     on<GetCompanyProfileEvent>(_onGetCompanyProfile);
     on<UpdateCompanyProfileEvent>(_onUpdateCompanyProfile);
@@ -45,11 +45,10 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     on<AddCandidateBookmarkEvent>(_onAddCandidateBookmark);
     on<GetCompanyBookmarksEvent>(_onGetBookmarks);
     on<CheckCompanyStatusEvent>(_onCheckCompanyStatus);
-    on<RegisterCompanyEvent>(_onRegisterCompany); // NEW HANDLER
-    on<VerifyCompanyQREvent>(_onVerifyCompanyQR); // NEW HANDLER
+    on<RegisterCompanyEvent>(_onRegisterCompany);
+    on<VerifyCompanyQREvent>(_onVerifyCompanyQR);
   }
 
-  // --- NEW HANDLER ---
   Future<void> _onRegisterCompany(
     RegisterCompanyEvent event,
     Emitter<CompanyState> emit,
@@ -60,7 +59,6 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
       password: event.password,
     );
     result.when(
-      // On success, the BLoC moves to the loaded state, ready for profile completion
       (company) => emit(CompanyLoaded(company)),
       (failure) => emit(CompanyError(failure.message)),
     );
@@ -117,14 +115,19 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
       return;
     }
 
-    emit(const CompanyLoading());
-    final result = await _addCandidateBookmark(
-      serviceLocator.get<SupabaseClient>().auth.currentUser!.id,
-      event.candidateId,
-    );
+    final companyId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
+
+    if (companyId == null) {
+      emit(const CompanyError('Authentication required: User ID not found.'));
+      return;
+    }
+
+    emit(CompanyLoading(company: current.company));
+
+    final result = await _addCandidateBookmark(companyId, event.candidateId);
 
     result.when(
-      (_) => emit(const BookmarkAddedSuccessfully()),
+      (_) => emit(BookmarkAddedSuccessfully(company: current.company)),
       (failure) => emit(CompanyError(failure.message)),
     );
   }
@@ -160,7 +163,6 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     );
   }
 
-  // --- NEW HANDLER ---
   Future<void> _onVerifyCompanyQR(
     VerifyCompanyQREvent event,
     Emitter<CompanyState> emit,

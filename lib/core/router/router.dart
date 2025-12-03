@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/features/company_portal/presentation/blocs/bloc/company_bloc.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/advanced_searchpage.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/company_bookmarks_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_onboarding_router_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/company_qr_page.dart';
 

@@ -11,7 +11,12 @@ class CompanyInitial extends CompanyState {
 }
 
 class CompanyLoading extends CompanyState {
-  const CompanyLoading();
+  final CompanyEntity? company;
+
+  const CompanyLoading({this.company});
+
+  @override
+  List<Object?> get props => [company];
 }
 
 class CompanyLoaded extends CompanyState {
@@ -23,9 +28,12 @@ class CompanyLoaded extends CompanyState {
 
 class CandidateResults extends CompanyState {
   final List<CandidateEntity> candidates;
-  const CandidateResults(this.candidates);
+  final CompanyEntity? company;
+
+  const CandidateResults(this.candidates, {this.company});
+
   @override
-  List<Object?> get props => [candidates];
+  List<Object?> get props => [candidates, company];
 }
 
 class CompanyBookmarksLoaded extends CompanyState {
@@ -36,7 +44,12 @@ class CompanyBookmarksLoaded extends CompanyState {
 }
 
 class BookmarkAddedSuccessfully extends CompanyState {
-  const BookmarkAddedSuccessfully();
+  final CompanyEntity? company;
+
+  const BookmarkAddedSuccessfully({this.company});
+
+  @override
+  List<Object?> get props => [company];
 }
 
 class CompanyError extends CompanyState {
