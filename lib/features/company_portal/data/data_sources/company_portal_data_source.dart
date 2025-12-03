@@ -82,7 +82,6 @@ class CompanyRemoteDataSource {
         throw SupabaseException('Invalid company ID: cannot be empty.');
       }
 
-      print(data);
       data.addAll({
         'id': supabase.auth.currentUser!.id,
         'user_id': supabase.auth.currentUser!.id,
@@ -122,7 +121,6 @@ class CompanyRemoteDataSource {
       }
 
       final result = await query;
-      print(result);
       return List<Map<String, dynamic>>.from(result);
     });
   }

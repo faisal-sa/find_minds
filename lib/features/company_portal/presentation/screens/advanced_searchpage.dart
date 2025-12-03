@@ -41,43 +41,50 @@ class AdvancedSearchPage extends StatelessWidget {
           onPressed: () => context.goNamed('company-search'),
         ),
       ),
-      body: Column(
-        children: [
-          _buildFilterForm(context),
-          const Divider(),
-          // Use BlocBuilder to display results
-          Expanded(
-            child: BlocBuilder<CompanyBloc, CompanyState>(
-              buildWhen: (previous, current) =>
-                  current is CompanyLoading ||
-                  current is CandidateResults ||
-                  current is CompanyError,
-              builder: (context, state) {
-                if (state is CompanyLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state is CandidateResults) {
-                  return _buildCandidateList(context, state.candidates);
-                }
-                if (state is CompanyError) {
-                  return Center(
+      body: BlocListener<CompanyBloc, CompanyState>(
+        listener: (context, state) {
+          if (state is BookmarkAddedSuccessfully) {
+            print("bookmark added");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Bookmark added successfully')),
+            );
+          }
+        },
+        child: Column(
+          children: [
+            _buildFilterForm(context),
+            const Divider(),
+            // Use BlocBuilder to display results
+            Expanded(
+              child: BlocBuilder<CompanyBloc, CompanyState>(
+                builder: (context, state) {
+                  print(state);
+                  if (state is CompanyLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (state is CandidateResults) {
+                    return _buildCandidateList(context, state.candidates);
+                  }
+                  if (state is CompanyError) {
+                    return Center(
+                      child: Text(
+                        'Search failed: ${state.message}',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                  // Default state when results haven't been fetched or cleared
+                  return const Center(
                     child: Text(
-                      'Search failed: ${state.message}',
-                      style: const TextStyle(color: Colors.red),
+                      'Enter criteria above and click Search.',
+                      style: TextStyle(color: Colors.grey),
                     ),
                   );
-                }
-                // Default state when results haven't been fetched or cleared
-                return const Center(
-                  child: Text(
-                    'Enter criteria above and click Search.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -154,20 +161,16 @@ class AdvancedSearchPage extends StatelessWidget {
             '${candidate.skills ?? 'N/A'} - ${candidate.city ?? 'Anywhere'}',
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.bookmark_add_outlined),
+            icon: candidate.bookmarked
+                ? const Icon(Icons.bookmark)
+                : const Icon(Icons.bookmark_add_outlined),
             color: Colors.blue,
             onPressed: () {
               // Dispatch bookmark event
               context.read<CompanyBloc>().add(
                 AddCandidateBookmarkEvent(candidate.id),
               );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Attempting to bookmark ${candidate.fullName}...',
-                  ),
-                ),
-              );
+            
             },
           ),
           onTap: () {

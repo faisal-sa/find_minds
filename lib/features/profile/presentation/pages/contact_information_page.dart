@@ -51,7 +51,6 @@ class ContactInformationPage extends StatelessWidget {
                     return InkWell(
                       onTap: () {
                         context.read<ProfileCubit>().pickImage();
-                        print(state.toString());
                       },
                       borderRadius: BorderRadius.circular(50),
                       child: state.image == null

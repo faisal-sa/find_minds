@@ -109,11 +109,9 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
     AddCandidateBookmarkEvent event,
     Emitter<CompanyState> emit,
   ) async {
-    final current = state;
-    if (current is! CompanyLoaded) {
-      emit(const CompanyError('Cannot bookmark: Company profile not loaded.'));
-      return;
-    }
+    final CandidateResults candidateResults = state as CandidateResults;
+
+
 
     final companyId = serviceLocator.get<SupabaseClient>().auth.currentUser?.id;
 
@@ -122,12 +120,14 @@ class CompanyBloc extends Bloc<CompanyEvent, CompanyState> {
       return;
     }
 
-    emit(CompanyLoading(company: current.company));
-
+    emit(CompanyLoading(company: candidateResults.company));
     final result = await _addCandidateBookmark(companyId, event.candidateId);
 
     result.when(
-      (_) => emit(BookmarkAddedSuccessfully(company: current.company)),
+      (_) {
+      emit(BookmarkAddedSuccessfully(company: candidateResults.company));
+      emit(candidateResults);
+    },
       (failure) => emit(CompanyError(failure.message)),
     );
   }
