@@ -44,6 +44,14 @@ import '../../features/company_portal/domain/usecases/update_company_profile.dar
     as _i923;
 import '../../features/company_portal/presentation/blocs/bloc/company_bloc.dart'
     as _i401;
+import '../../features/CRinfo/data/datasources/wathq_remote_datasource.dart'
+    as _i697;
+import '../../features/CRinfo/data/repositories/cr_info_repository_impl.dart'
+    as _i319;
+import '../../features/CRinfo/domain/repositories/cr_info_repository.dart'
+    as _i861;
+import '../../features/CRinfo/domain/usecases/get_cr_info.dart' as _i333;
+import '../../features/CRinfo/presentation/cubit/cr_info_cubit.dart' as _i550;
 import '../../features/individuals/features/about_me/data/datasources/about_me_remote_data_source.dart'
     as _i733;
 import '../../features/individuals/features/about_me/data/repositories/about_me_repository_impl.dart'
@@ -174,6 +182,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i733.AboutMeRemoteDataSource>(
       () => _i733.AboutMeRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
+    gh.lazySingleton<_i697.WathqRemoteDataSource>(
+      () => _i697.WathqRemoteDataSourceImpl(),
+    );
+    gh.lazySingleton<_i861.CrInfoRepository>(
+      () => _i319.CrInfoRepositoryImpl(gh<_i697.WathqRemoteDataSource>()),
+    );
     gh.lazySingleton<_i542.AboutMeRepository>(
       () => _i633.AboutMeRepositoryImpl(
         gh<_i733.AboutMeRemoteDataSource>(),
@@ -204,6 +218,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i843.EducationRepository>(
       () =>
           _i999.EducationRepositoryImpl(gh<_i380.EducationRemoteDataSource>()),
+    );
+    gh.factory<_i333.GetCrInfo>(
+      () => _i333.GetCrInfo(gh<_i861.CrInfoRepository>()),
     );
     gh.lazySingleton<_i607.CertificationRemoteDataSource>(
       () => _i607.CertificationRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
@@ -314,6 +331,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i432.ProcessPaymentUseCase>(
       () => _i432.ProcessPaymentUseCase(gh<_i903.PaymentRepository>()),
+    );
+    gh.factory<_i550.CrInfoCubit>(
+      () => _i550.CrInfoCubit(getCrInfo: gh<_i333.GetCrInfo>()),
     );
     gh.factory<_i387.JobPreferencesCubit>(
       () => _i387.JobPreferencesCubit(

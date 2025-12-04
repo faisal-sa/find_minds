@@ -29,13 +29,14 @@ void showCustomSnackbar(
           ),
         ],
       ),
-      backgroundColor: isError ? const Color(0xFFD32F2F) : const Color(0xFF323232),
-      behavior: SnackBarBehavior.floating,
+      backgroundColor: isError
+          ? const Color(0xFFD32F2F)
+          : const Color(0xFF323232),
+      behavior: SnackBarBehavior.fixed,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.all(16),
       duration: duration,
       elevation: 6,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
   );
 }
-

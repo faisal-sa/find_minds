@@ -26,7 +26,8 @@ import 'package:graduation_project/features/individuals/profile/presentation/pag
 import 'package:graduation_project/features/individuals/navigation/pages/individuals_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
-import '../../features/CRinfo/cr_info_page.dart';
+import '../../features/CRinfo/presentation/pages/cr_info_page.dart';
+import '../../features/CRinfo/presentation/cubit/cr_info_cubit.dart';
 import '../../features/payment/export_payment.dart';
 
 // keep it here for now
@@ -64,9 +65,10 @@ final GoRouter router = GoRouter(
     //
     GoRoute(
       path: '/cr-info',
-      builder: (context, state) {
-        return const CrInfoPage(); //spalsh later page
-      },
+      builder: (context, state) => BlocProvider(
+        create: (_) => serviceLocator<CrInfoCubit>(),
+        child: const CrInfoPage(),
+      ),
     ),
 
     // ==================  Auth Routes  =================== //

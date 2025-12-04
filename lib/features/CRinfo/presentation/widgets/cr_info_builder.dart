@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../cr_info_model.dart';
+import '../../domain/entities/cr_info.dart';
 
 class CrInfoBuilder extends StatelessWidget {
-  final CrInfoModel data;
+  final CrInfo data;
 
   const CrInfoBuilder({super.key, required this.data});
 
@@ -11,11 +11,7 @@ class CrInfoBuilder extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        //==================  data got from the API ===================//
-        //
-        //
-
-        //==================  company name widget ===================
+        // Company name widget
         AnimatedContainer(
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
@@ -30,7 +26,6 @@ class CrInfoBuilder extends StatelessWidget {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
-
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -62,19 +57,20 @@ class CrInfoBuilder extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 16),
-        //==================  company info widget ===================
-        //
-        //
+        const SizedBox(height: 16),
+
+        // Company info tiles
         _tile("رقم السجل", data.crNumber),
         _tile("الرقم الوطني", data.crNationalNumber),
         _tile("رقم الإصدار", data.versionNo.toString()),
         _tile("المدينة", data.headquarterCityName),
         _tile("تاريخ التأسيس (ميلادي)", data.issueDateGregorian),
         _tile("تاريخ التأسيس (هجري)", data.issueDateHijri),
-        _tile("المدة", "${data.duration} سنة"),
+        if (data.companyDuration != null)
+          _tile("المدة", data.companyDuration!),
         _tile("نوع الكيان", data.entityType.name),
-        _tile("الشكل القانوني", data.entityType.formName),
+        if (data.entityType.formName != null)
+          _tile("الشكل القانوني", data.entityType.formName!),
         _tile("الحالة", data.status.name),
         _tile("سجل رئيسي", data.isMain ? "نعم" : "لا"),
         _tile("في عملية تصفية", data.inLiquidationProcess ? "نعم" : "لا"),
@@ -85,10 +81,8 @@ class CrInfoBuilder extends StatelessWidget {
         if (data.mainCrNationalNumber != null)
           _tile("الرقم الوطني للسجل الرئيسي", data.mainCrNationalNumber!),
 
-        //==================  if characterList is not empty ===================
-        //
-        //
-        if (data.entityType.characterList.isNotEmpty) ...[
+        // Character list
+        if (data.entityType.characters.isNotEmpty) ...[
           const SizedBox(height: 16),
           Text(
             "الخصائص:",
@@ -98,21 +92,15 @@ class CrInfoBuilder extends StatelessWidget {
               color: Colors.blueAccent.shade100,
             ),
           ),
-          ...data.entityType.characterList.map(
-            (e) => ListTile(
-              title: Text(e.name, style: const TextStyle(color: Colors.white)),
-              subtitle: Text(
-                "ID: ${e.id}",
-                style: TextStyle(color: Colors.grey.shade400),
-              ),
+          ...data.entityType.characters.map(
+            (character) => ListTile(
+              title: Text(character, style: const TextStyle(color: Colors.white)),
             ),
           ),
         ],
         const SizedBox(height: 16),
 
-        //==================  if activities is not empty ===================
-        //
-        //
+        // Activities
         Text(
           "الأنشطة:",
           style: TextStyle(
@@ -143,9 +131,6 @@ class CrInfoBuilder extends StatelessWidget {
     );
   }
 
-  //==================  tile widget ===================//
-  //
-  //
   Widget _tile(String title, String value) {
     return Card(
       color: const Color(0xFF262626),
@@ -157,14 +142,11 @@ class CrInfoBuilder extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: TextStyle(color: Colors.blueAccent.shade100)),
-            Text(
-              value,
-
-              style: const TextStyle(color: Colors.white, fontSize: 15),
-            ),
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 15)),
           ],
         ),
       ),
     );
   }
 }
+
