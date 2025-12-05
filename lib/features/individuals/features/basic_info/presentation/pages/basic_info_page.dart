@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/app/widgets/custom_text_field.dart';
 import 'package:graduation_project/app/widgets/saving_button.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
-import 'package:graduation_project/app/widgets/custom_text_field.dart';
 import 'package:graduation_project/features/shared/user_cubit.dart';
+
+import '../../../../../../core/constants/cities.dart';
+import '../../../shared/widgets/custom_dropdown_field.dart';
 
 class BasicInfoPage extends HookWidget {
   const BasicInfoPage({super.key});
@@ -19,6 +23,7 @@ class BasicInfoPage extends HookWidget {
     final locationCtrl = useTextEditingController(text: currentUser.location);
     final phoneCtrl = useTextEditingController(text: currentUser.phoneNumber);
     final emailCtrl = useTextEditingController(text: currentUser.email);
+    final selectedLocation = useState<String?>(currentUser.location);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -88,15 +93,30 @@ class BasicInfoPage extends HookWidget {
               ),
               const SizedBox(height: 24),
               CustomTextField(
-                label: 'Job Title',
+                label: 'Desired Job Title',
                 hint: 'Software Engineer',
                 controller: jobTitleCtrl,
               ),
+              SizedBox(height: 4.h),
+              Align(
+                alignment: .centerLeft,
+                child: Text(
+                  "this will be used for Role Matching analysis",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
               const SizedBox(height: 24),
-              CustomTextField(
+              CustomDropdownField(
                 label: 'Location',
-                hint: 'New York, USA',
-                controller: locationCtrl,
+                hint: 'Select City',
+                items: saudiCities,
+                value: selectedLocation.value, // Bind to Hook State
+                onChanged: (newValue) {
+                  // A. Update UI
+                  selectedLocation.value = newValue;
+                  // B. Update Controller (So the Save button below works)
+                  locationCtrl.text = newValue ?? '';
+                },
               ),
               const SizedBox(height: 24),
               CustomTextField(

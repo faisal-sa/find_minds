@@ -77,12 +77,19 @@ class OTPVerificationPage extends StatelessWidget {
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.blue),
                             ),
+                            hintStyle:  TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+
+                            fontWeight: FontWeight.w300,
+                          ),
                             hintText: 'Enter 6-digit code',
                           ),
+
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            letterSpacing: 8,
+                            color: Colors.black,
+                            fontSize: 16,
+                            letterSpacing: 6,
                             fontWeight: FontWeight.bold,
                           ),
                           keyboardType: TextInputType.number,
