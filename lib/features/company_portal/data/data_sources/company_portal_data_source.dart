@@ -208,27 +208,6 @@ class CompanyRemoteDataSource {
 
       final companyResponse = await client
           .from('companies')
-<<<<<<< HEAD
-          .select('id, industry')
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (companyResponse != null) {
-        final industry = companyResponse['industry'] as String?;
-
-        if (industry != null &&
-            industry.trim().isNotEmpty &&
-            industry != 'Pending') {
-          hasProfile = true;
-        } else {
-          hasProfile = false;
-        }
-      }
-
-      final companyId = companyResponse?['id'] as String?;
-      if (companyId != null) {
-        // ... check subscription ...
-=======
           .select('id')
           .eq('user_id', userId)
           .maybeSingle();
@@ -243,7 +222,6 @@ class CompanyRemoteDataSource {
             .eq('status', 'active')
             .maybeSingle();
         hasPaid = subscriptionResponse != null;
->>>>>>> origin/azoz
       }
 
       return {'hasProfile': hasProfile, 'hasPaid': hasPaid};

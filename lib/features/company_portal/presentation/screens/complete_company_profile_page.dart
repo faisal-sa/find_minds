@@ -7,7 +7,6 @@ import 'package:graduation_project/features/company_portal/domain/entities/compa
 import 'package:graduation_project/core/storage/company_local_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-<<<<<<< HEAD
 // ✅ Change to StatefulWidget
 class CompleteCompanyProfilePage extends StatefulWidget {
   const CompleteCompanyProfilePage({super.key});
@@ -69,11 +68,6 @@ class _CompleteCompanyProfilePageState
     super.dispose();
   }
 
-=======
-class CompleteCompanyProfilePage extends StatelessWidget {
-  const CompleteCompanyProfilePage({super.key});
-
->>>>>>> origin/azoz
   Widget _buildVerticalSpace({double height = 16.0}) =>
       SizedBox(height: height);
 
@@ -91,7 +85,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   void _saveProfile(CompanyEntity company) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -121,71 +114,12 @@ class CompleteCompanyProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Complete Company Profile'),
         // Using safe fallback for colors if theme is null
-=======
-  @override
-  Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController(text: "a");
-    final industryController = TextEditingController(text: "a");
-    final cityController = TextEditingController(text: "a");
-    final descController = TextEditingController(text: "a");
-    final websiteController = TextEditingController();
-    final addressController = TextEditingController();
-    final emailController = TextEditingController();
-    final phoneController = TextEditingController();
-
-    final sizeOptions = [
-      '1-50 employees',
-      '51-200 employees',
-      '201-1000 employees',
-      '1000+ employees',
-    ];
-    String? selectedSize;
-
-    // The logic remains untouched
-    void saveProfile(CompanyEntity company) {
-      if (formKey.currentState!.validate()) {
-        // Ensure DropdownButtonFormField updates the selectedSize value
-        formKey.currentState!.save();
-
-        final updated = company.copyWith(
-          companyName: nameController.text,
-          industry: industryController.text,
-          city: cityController.text,
-          description: descController.text,
-          website: websiteController.text.isNotEmpty
-              ? websiteController.text
-              : company.website,
-          address: addressController.text.isNotEmpty
-              ? addressController.text
-              : company.address,
-          email: emailController.text.isNotEmpty
-              ? emailController.text
-              : company.email,
-          phone: phoneController.text.isNotEmpty
-              ? phoneController.text
-              : company.phone,
-          companySize: selectedSize ?? company.companySize,
-          updatedAt: DateTime.now(),
-        );
-
-        context.read<CompanyBloc>().add(
-          UpdateCompanyProfileEvent(company: updated),
-        );
-      }
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Complete Company Profile'),
->>>>>>> origin/azoz
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
       body: BlocConsumer<CompanyBloc, CompanyState>(
         listener: (context, state) async {
           if (state is CompanyLoaded) {
-<<<<<<< HEAD
             // ✅ Save ID locally for future use
             final userId = serviceLocator
                 .get<SupabaseClient>()
@@ -203,15 +137,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
               // ✅ Navigate to Payment
               context.go('/company/payment');
             }
-=======
-            await CompanyLocalStorage.saveCompanyId(
-              serviceLocator.get<SupabaseClient>().auth.currentUser!.id,
-            );
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile saved successfully!')),
-            );
-            context.go('/company/payment');
->>>>>>> origin/azoz
           } else if (state is CompanyError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -222,7 +147,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-<<<<<<< HEAD
           // Use current company data if available, or create a skeleton
           final company = (state is CompanyLoaded)
               ? state.company
@@ -246,46 +170,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(24.0),
                 children: [
-=======
-          if (state is CompanyLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          CompanyEntity company;
-          if (state is CompanyLoaded) {
-            company = state.company;
-          } else {
-            company = CompanyEntity(
-              companyName: '',
-              industry: '',
-              description: '',
-              city: '',
-              logoUrl: "x",
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-            );
-          }
-
-          // // Fill fields with existing values (unchanged logic)
-          // nameController.text = company.companyName;
-          // industryController.text = company.industry;
-          // cityController.text = company.city;
-          // descController.text = company.description;
-          // websiteController.text = company.website ?? '';
-          // addressController.text = company.address ?? '';
-          // emailController.text = company.email ?? '';
-          // phoneController.text = company.phone ?? '';
-          selectedSize = company.companySize;
-
-          // UI Refactoring begins here
-          return SafeArea(
-            child: Form(
-              key: formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(24.0),
-                children: [
-                  // --- Section 1: Core Company Information ---
->>>>>>> origin/azoz
                   const Text(
                     'Step 1: Core Company Information',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -333,22 +217,14 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                       border: OutlineInputBorder(),
                       hintText: 'Select Company Size',
                     ),
-<<<<<<< HEAD
                     value: selectedSize, // Use the state variable
-=======
-                    initialValue: selectedSize,
->>>>>>> origin/azoz
                     items: sizeOptions
                         .map((s) => DropdownMenuItem(value: s, child: Text(s)))
                         .toList(),
                     onChanged: (v) {
-<<<<<<< HEAD
                       setState(() {
                         selectedSize = v;
                       });
-=======
-                      selectedSize = v;
->>>>>>> origin/azoz
                     },
                     onSaved: (v) => selectedSize = v,
                   ),
@@ -368,10 +244,6 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                   ),
                   _buildVerticalSpace(height: 30),
 
-<<<<<<< HEAD
-=======
-                  // --- Section 2: Contact Information ---
->>>>>>> origin/azoz
                   const Text(
                     'Step 2: Contact Details (Optional)',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -421,18 +293,11 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                   ),
                   _buildVerticalSpace(height: 40),
 
-<<<<<<< HEAD
                   Center(
                     child: ElevatedButton(
                       onPressed: state is CompanyLoading
                           ? null // Disable button while loading
                           : () => _saveProfile(company),
-=======
-                  // --- Save Button ---
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () => saveProfile(company),
->>>>>>> origin/azoz
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
@@ -459,11 +324,7 @@ class CompleteCompanyProfilePage extends StatelessWidget {
                             ),
                     ),
                   ),
-<<<<<<< HEAD
                   _buildVerticalSpace(height: 20),
-=======
-                  _buildVerticalSpace(height: 20), // Final space at the bottom
->>>>>>> origin/azoz
                 ],
               ),
             ),

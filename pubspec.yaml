@@ -48,10 +48,6 @@ dependencies:
   dio: ^5.9.0
   uuid: ^4.5.2
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/azoz
 dev_dependencies:
   flutter_test:
     sdk: flutter
