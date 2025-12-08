@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
 
@@ -16,6 +17,7 @@ class UserEntity extends Equatable {
   final String? avatarUrl; 
   final List<WorkExperience> workExperiences;
   final List<Education> educations;
+  final List<Certification> certifications;
 
   const UserEntity({
     this.firstName = '',
@@ -29,6 +31,7 @@ class UserEntity extends Equatable {
     this.avatarUrl,
     this.workExperiences = const [],
     this.educations = const [],
+    this.certifications = const [],
   });
 
   UserEntity copyWith({
@@ -43,6 +46,7 @@ class UserEntity extends Equatable {
     String? avatarUrl,
     List<WorkExperience>? workExperiences,
     List<Education>? educations,
+    List<Certification>? certifications,
   }) {
     return UserEntity(
       firstName: firstName ?? this.firstName,
@@ -56,6 +60,7 @@ class UserEntity extends Equatable {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       workExperiences: workExperiences ?? this.workExperiences,
       educations: educations ?? this.educations,
+      certifications: certifications ?? this.certifications,
     );
   }
 
@@ -72,6 +77,7 @@ class UserEntity extends Equatable {
       'avatarUrl': avatarUrl,
       'workExperiences': workExperiences.map((x) => x.toMap()).toList(),
       'educations': educations.map((x) => x.toMap()).toList(),
+      'certifications': certifications.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -97,6 +103,11 @@ class UserEntity extends Equatable {
           (x) => Education.fromMap(x),
         ),
       ),
+      certifications: List<Certification>.from(
+        (map['certifications'] as List<dynamic>? ?? []).map<Certification>(
+          (x) => Certification.fromMap(x),
+        ),
+      ), // <--- ADD THIS
     );
   }
 
@@ -119,5 +130,6 @@ class UserEntity extends Equatable {
     avatarUrl,
     workExperiences,
     educations,
+    certifications,
   ];
 }

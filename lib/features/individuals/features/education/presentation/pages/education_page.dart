@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/education/presentation/widgets/education_card.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
 
 import '../cubit/education_cubit.dart';
 import '../cubit/education_state.dart';
@@ -37,7 +39,17 @@ class EducationPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<EducationCubit, EducationState>(
+      body: BlocListener<EducationCubit, EducationState>(
+        listener: (context, state) {
+          if (state.status == ListStatus.success ||
+              (state.educations.isNotEmpty &&
+                  state.status != ListStatus.loading)) {
+            serviceLocator.get<UserCubit>().updateEducationsList(
+              state.educations,
+            );
+          }
+        },
+        child: BlocBuilder<EducationCubit, EducationState>(
         builder: (context, state) {
           if (state.status == ListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
@@ -102,6 +114,7 @@ class EducationPage extends StatelessWidget {
             },
           );
         },
+      ),
       ),
     );
   }

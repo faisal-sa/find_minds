@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
 import 'package:graduation_project/features/shared/user_entity.dart';
@@ -56,12 +57,14 @@ class UserCubit extends Cubit<UserState> {
       // We use the foreign key relationships to fetch everything in one query.
       // Ensure your Supabase Foreign Keys match the names used here.
       print("fetching now");
+      //add certifications here..
       final response = await _supabase
           .from('profiles')
           .select('''
         *,
         educations (*),
-        work_experiences (*)
+        work_experiences (*),
+        certifications (*)    
       ''')
           .eq('id', userId)
           .single();
@@ -92,6 +95,12 @@ class UserCubit extends Cubit<UserState> {
             .toList() ??
         [];
 
+    final certList =
+        (data['certifications'] as List<dynamic>?)
+            ?.map((e) => _mapSupabaseCertification(e))
+            .toList() ??
+        [];
+
     return UserEntity(
       firstName: data['first_name'] ?? '',
       lastName: data['last_name'] ?? '',
@@ -100,11 +109,12 @@ class UserCubit extends Cubit<UserState> {
       email: data['email'] ?? '',
       location: data['location'] ?? '',
       summary:
-          data['about_me'] ?? '', // DB uses 'about_me', Entity uses 'summary'
+          data['about_me'] ?? '', 
       avatarUrl: data['avatar_url'],
       videoUrl: data['intro_video_url'],
       educations: educationList,
       workExperiences: workList,
+      certifications: certList,
     );
   }
 
@@ -139,6 +149,7 @@ class UserCubit extends Cubit<UserState> {
       academicRecordUrl: map['academic_record_url'],
     );
   }
+
 
   Future<void> _saveUserToStorage(UserEntity user) async {
     try {
@@ -312,6 +323,12 @@ class UserCubit extends Cubit<UserState> {
       state.copyWith(user: state.user.copyWith(workExperiences: sortedList)),
     );
   }
+  void updateEducationsList(List<Education> educations) {
+    final sortedList = List<Education>.from(educations)
+      ..sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    emit(state.copyWith(user: state.user.copyWith(educations: sortedList)));
+  }
   void addWorkExperience(WorkExperience experience) {
     final currentList = List<WorkExperience>.from(state.user.workExperiences);
     currentList.add(experience);
@@ -340,5 +357,26 @@ class UserCubit extends Cubit<UserState> {
     final currentList = List<Education>.from(state.user.educations);
     currentList.removeWhere((element) => element.id == id);
     emit(state.copyWith(user: state.user.copyWith(educations: currentList)));
+  }
+  Certification _mapSupabaseCertification(Map<String, dynamic> map) {
+    return Certification(
+      id: map['id']?.toString() ?? '',
+      name: map['name'] ?? '',
+      // Map DB 'issuing_institution' to Dart 'issuingInstitution'
+      issuingInstitution: map['issuing_institution'] ?? '',
+
+      // Handle required Date (Fallback to now if DB is null, though DB allows null)
+      issueDate: map['issue_date'] != null
+          ? DateTime.parse(map['issue_date'])
+          : DateTime.now(),
+
+      // Map DB 'expiration_date'
+      expirationDate: map['expiration_date'] != null
+          ? DateTime.parse(map['expiration_date'])
+          : null,
+
+      // Map DB 'credential_url'
+      credentialUrl: map['credential_url'],
+    );
   }
 }

@@ -22,6 +22,14 @@ class EducationCubit extends Cubit<EducationState> {
     this._updateEducationUseCase,
   ) : super(const EducationState());
 
+void initialize(List<Education> initialEducations) {
+    if (state.status == ListStatus.initial) {
+      final sortedList = List<Education>.from(initialEducations)
+        ..sort((a, b) => b.startDate.compareTo(a.startDate));
+
+      emit(EducationState(status: ListStatus.success, educations: sortedList));
+    }
+  }
   Future<void> loadEducations() async {
     emit(const EducationState(status: ListStatus.loading));
     try {

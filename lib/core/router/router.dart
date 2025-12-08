@@ -207,10 +207,15 @@ final GoRouter router = GoRouter(
                   path: 'education',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
+                    final userCubit = serviceLocator.get<UserCubit>();
+                    final initialEducations = userCubit.state.user.educations;
+    
                     return BlocProvider(
-                      create: (context) =>
-                          serviceLocator.get<EducationCubit>()
-                            ..loadEducations(),
+                      create: (context) {
+                        final cubit = serviceLocator.get<EducationCubit>();
+                        cubit.initialize(initialEducations);
+                        return cubit;
+                      },
                       child: const EducationPage(),
                     );
                   },
