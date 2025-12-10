@@ -22,41 +22,42 @@ class IndividualsHomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.bg,
 
-      appBar: const _AppBar(),
+      // appBar: const _AppBar(),
 
       body: navigationShell,
 
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey.shade200)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: navigationShell.currentIndex,
-          onTap: _goBranch,
-          backgroundColor: Colors.white,
-          elevation: 0,
-          selectedItemColor: AppColors.bluePrimary,
-          unselectedItemColor: AppColors.textSub,
-          selectedFontSize: 12,
-          unselectedFontSize: 12,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart),
-              label: 'Insights',
-            ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(Icons.chat_bubble_outline),
-            //   label: 'Chats',
-            // ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: Container(
+      //   decoration: BoxDecoration(
+      //     color: Colors.white,
+      //     border: Border(top: BorderSide(color: Colors.grey.shade200)),
+      //   ),
+      //   child: BottomNavigationBar(
+      //     currentIndex: navigationShell.currentIndex,
+      //     onTap: _goBranch,
+      //     backgroundColor: Colors.white,
+      //     elevation: 0,
+      //     selectedItemColor: AppColors.bluePrimary,
+      //     unselectedItemColor: AppColors.textSub,
+      //     selectedFontSize: 12,
+      //     unselectedFontSize: 12,
+      //     type: BottomNavigationBarType.fixed,
+      //     items: const [
+      //       BottomNavigationBarItem(
+      //         icon: Icon(Icons.bar_chart),
+      //         label: 'Insights',
+      //       ),
+      //       //to be added oneday!
+      //       // BottomNavigationBarItem(
+      //       //   icon: Icon(Icons.chat_bubble_outline),
+      //       //   label: 'Chats',
+      //       // ),
+      //       BottomNavigationBarItem(
+      //         icon: Icon(Icons.person_outline),
+      //         label: 'Profile',
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

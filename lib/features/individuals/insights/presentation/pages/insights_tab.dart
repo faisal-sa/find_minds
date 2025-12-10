@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/core/theme/theme.dart';
+import 'package:graduation_project/core/usecasesAbstract/no_params.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/features/individuals/engagement/presentation/widgets/engagement_section.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/feature_card.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/locked_feature_card.dart';
@@ -14,195 +17,198 @@ class InsightsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserCubit, UserState>(
-      listener: (context, state) {
-        if (state.resumeError != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.resumeError!),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      },
-      child: BlocBuilder<UserCubit, UserState>(
-        builder: (context, state) {
-          final userEntity = state.user;
-          final completionRatio = state.profileCompletion;
-          final completionPercent = (completionRatio * 100).toInt();
-          final isComplete = completionRatio >= 0.8;
-
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildWelcomeCard(
-                  context,
-                  state,
-                  isComplete,
-                  completionPercent,
-                ),
-                const SizedBox(height: 24),
-
-                const Text(
-                  "Your Insights",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 140.h,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: isComplete
-                            ? FeatureCard(
-                                onTap: () {
-                                  context.go('/insights/match-strength');
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Center(
-                                      child: Icon(
-                                        Icons.handshake,
-                                        color: Colors.pink,
-                                        size: 32.r,
-                                      ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Match Strength",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.r,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        Text(
-                                          "Check job fit",
-                                          style: TextStyle(
-                                            fontSize: 11.r,
-                                            color: AppColors.textSub,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "View Score",
-                                          style: TextStyle(
-                                            fontSize: 12.r,
-                                            color: AppColors.bluePrimary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(width: 4.h),
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          size: 14.r,
-                                          color: AppColors.bluePrimary,
-                                        ),
-
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : const LockedFeatureCard(
-                                icon: Icons.track_changes,
-                                title: "Match Strength",
-                                unlockText: "Complete profile to see scores.",
-                              ),
-                      ),
-                      const SizedBox(width: 16),
-
-                      Expanded(
-                        child: isComplete
-                            ? FeatureCard(
-                                onTap: () {
-                                  context.go('/insights/ai-skill-check');
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Center(
-                                      child: Icon(
-                                        Icons.bolt,
-                                        color: Colors.amber,
-                                        size: 32.r,
-                                      ),
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "AI Skill Check",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.r,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4.h),
-                                        Text(
-                                          "Validate top skills",
-                                          style: TextStyle(
-                                            fontSize: 11.r,
-                                            color: AppColors.textSub,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Start Quiz",
-                                          style: TextStyle(
-                                            fontSize: 12.r,
-                                            color: AppColors.bluePrimary,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          size: 14.r,
-                                          color: AppColors.bluePrimary,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : const LockedFeatureCard(
-                                icon: Icons.bolt,
-                                title: "AI Quiz",
-                                unlockText:
-                                    "Generate quiz based on experience.",
-                              ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-                EngagementSection(isProfileComplete: isComplete),
-
-              ],
-            ),
-          );
+    return Scaffold(
+      appBar: _InsightsAppBar(),
+      body: BlocListener<UserCubit, UserState>(
+        listener: (context, state) {
+          if (state.resumeError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.resumeError!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         },
+        child: BlocBuilder<UserCubit, UserState>(
+          builder: (context, state) {
+            final userEntity = state.user;
+            final completionRatio = state.profileCompletion;
+            final completionPercent = (completionRatio * 100).toInt();
+            final isComplete = completionRatio >= 0.8;
+
+            return SingleChildScrollView(
+           
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildWelcomeCard(
+                    context,
+                    state,
+                    isComplete,
+                    completionPercent,
+                  ),
+                  const SizedBox(height: 24),
+
+                  const Text(
+                    "Your Insights",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 140.h,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: isComplete
+                              ? FeatureCard(
+                                  onTap: () {
+                                    context.go('/insights/match-strength');
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Center(
+                                        child: Icon(
+                                          Icons.handshake,
+                                          color: Colors.pink,
+                                          size: 32.r,
+                                        ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Match Strength",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.r,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4.h),
+                                          Text(
+                                            "Check job fit",
+                                            style: TextStyle(
+                                              fontSize: 11.r,
+                                              color: AppColors.textSub,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "View Score",
+                                            style: TextStyle(
+                                              fontSize: 12.r,
+                                              color: AppColors.bluePrimary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4.h),
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            size: 14.r,
+                                            color: AppColors.bluePrimary,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const LockedFeatureCard(
+                                  icon: Icons.track_changes,
+                                  title: "Match Strength",
+                                  unlockText: "Complete profile to see scores.",
+                                ),
+                        ),
+                        const SizedBox(width: 16),
+
+                        Expanded(
+                          child: isComplete
+                              ? FeatureCard(
+                                  onTap: () {
+                                    context.go('/insights/ai-skill-check');
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Center(
+                                        child: Icon(
+                                          Icons.bolt,
+                                          color: Colors.amber,
+                                          size: 32.r,
+                                        ),
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "AI Skill Check",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.r,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4.h),
+                                          Text(
+                                            "Validate top skills",
+                                            style: TextStyle(
+                                              fontSize: 11.r,
+                                              color: AppColors.textSub,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Start Quiz",
+                                            style: TextStyle(
+                                              fontSize: 12.r,
+                                              color: AppColors.bluePrimary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            size: 14.r,
+                                            color: AppColors.bluePrimary,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const LockedFeatureCard(
+                                  icon: Icons.bolt,
+                                  title: "AI Quiz",
+                                  unlockText:
+                                      "Generate quiz based on experience.",
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                  EngagementSection(isProfileComplete: isComplete),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -446,6 +452,48 @@ class InsightsTab extends StatelessWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+
+class _InsightsAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  const _InsightsAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: const Color(0XFFf1f5f9),
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // 1. Clickable Avatar -> Navigates to Profile
+          GestureDetector(
+            onTap: () {
+              // Navigate to the Profile branch
+              context.go('/profile');
+            },
+            child: CircleAvatar(
+              backgroundColor: AppColors.blueLight,
+              child: Icon(Icons.person, color: AppColors.bluePrimary),
+            ),
+          ),
+
+          // 2. Logout Button
+          IconButton(
+            onPressed: () {
+              serviceLocator.get<AuthCubit>().signOut.call(NoParams());
+              context.go("/");
+            },
+            icon: const Icon(Icons.exit_to_app),
+          ),
         ],
       ),
     );
