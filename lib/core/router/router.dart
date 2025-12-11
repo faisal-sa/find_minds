@@ -9,6 +9,7 @@ import 'package:graduation_project/features/company_portal/presentation/screens/
 import 'package:graduation_project/features/company_portal/presentation/screens/search/CandidateResultsPage.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/search/company_search_page.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/ai_skill_check_page.dart';
+import 'package:graduation_project/features/individuals/features/skills_languages/presentation/cubit/skills_languages_cubit.dart';
 import 'package:graduation_project/features/individuals/match_strength/cubit/match_strength_cubit.dart';
 import 'package:graduation_project/features/individuals/match_strength/pages/match_strength_page.dart';
 import 'package:graduation_project/features/onbording/intro_page.dart';
@@ -244,7 +245,30 @@ GoRoute(
                   path: 'skills',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
-                    return const SkillsPage();
+                    // 1. Get UserCubit instance
+                    final userCubit = serviceLocator.get<UserCubit>();
+
+                    // 2. Extract existing lists for initialization
+                    final initialSkills = userCubit.state.user.skills;
+                    final initialLanguages = userCubit.state.user.languages;
+
+                    // 3. Use MultiBlocProvider to provide BOTH UserCubit and SkillsLanguagesCubit
+                    return MultiBlocProvider(
+                      providers: [
+                        // Provide the existing UserCubit to the new route context
+                        BlocProvider.value(value: userCubit),
+                        // Create and provide the SkillsLanguagesCubit
+                        BlocProvider(
+                          create: (context) {
+                            final cubit = serviceLocator
+                                .get<SkillsLanguagesCubit>();
+                            cubit.initialize(initialSkills, initialLanguages);
+                            return cubit;
+                          },
+                        ),
+                      ],
+                      child: const SkillsPage(),
+                    );
                   },
                 ),
                 GoRoute(

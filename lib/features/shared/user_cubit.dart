@@ -125,6 +125,16 @@ class UserCubit extends Cubit<UserState> {
     emit(state.copyWith(user: updatedUser));
   }
 
+  void updateSkillsAndLanguages(List<String> skills, List<String> languages) {
+    // Create a copy of the current user with updated lists
+    final updatedUser = state.user.copyWith(
+      skills: skills,
+      languages: languages,
+    );
+
+    // Emit new state (triggers onChange -> saves to Local Storage)
+    emit(state.copyWith(user: updatedUser));
+  }
 void updateCertificationsList(List<Certification> certifications) {
     // Create a copy of the current user with the updated certifications list
     final updatedUser = state.user.copyWith(certifications: certifications);
@@ -273,10 +283,8 @@ void updateCertificationsList(List<Certification> certifications) {
         return;
       }
 
-      // 1. Fetch Profile with Relations
-      // We use the foreign key relationships to fetch everything in one query.
-      // Ensure your Supabase Foreign Keys match the names used here.
-      //add certifications here..
+      // 'skills' and 'languages' are columns in 'profiles', so '*' captures them.
+      // We only need specific joins for separate tables (educations, work_experiences, certifications).
       final response = await _supabase
           .from('profiles')
           .select('''
@@ -290,11 +298,11 @@ void updateCertificationsList(List<Certification> certifications) {
 
       final fetchedUser = _mapSupabaseResponseToEntity(response);
       print("Your entity: $fetchedUser");
+      
       emit(state.copyWith(user: fetchedUser));
       _saveUserToStorage(fetchedUser);
     } catch (e) {
       print("Error fetching user profile from Supabase: $e");
-      // Optional: emit(state.copyWith(error: e.toString()));
     }
   }
 
@@ -344,25 +352,36 @@ void updateCertificationsList(List<Certification> certifications) {
   }
   /// Helper to map Supabase snake_case JSON to UserEntity
   UserEntity _mapSupabaseResponseToEntity(Map<String, dynamic> data) {
-    // Map Educations (using your existing EducationModel logic if available, or manual map)
+    // 1. Map Educations
     final educationList =
         (data['educations'] as List<dynamic>?)
             ?.map((e) => _mapSupabaseEducation(e))
             .toList() ??
         [];
 
-    // Map Work Experiences
+    // 2. Map Work Experiences
     final workList =
         (data['work_experiences'] as List<dynamic>?)
             ?.map((e) => _mapSupabaseWorkExperience(e))
             .toList() ??
         [];
 
+    // 3. Map Certifications
     final certList =
         (data['certifications'] as List<dynamic>?)
             ?.map((e) => _mapSupabaseCertification(e))
             .toList() ??
         [];
+
+    // 4. Map Skills (Handle text[] array from Postgres)
+    final List<String> skillsList = data['skills'] != null
+        ? List<String>.from(data['skills'])
+        : [];
+
+    // 5. Map Languages (Handle text[] array from Postgres)
+    final List<String> languagesList = data['languages'] != null
+        ? List<String>.from(data['languages'])
+        : [];
 
     return UserEntity(
       firstName: data['first_name'] ?? '',
@@ -377,6 +396,9 @@ void updateCertificationsList(List<Certification> certifications) {
       educations: educationList,
       workExperiences: workList,
       certifications: certList,
+      // Add these to your UserEntity constructor:
+      skills: skillsList,
+      languages: languagesList,
     );
   }
 

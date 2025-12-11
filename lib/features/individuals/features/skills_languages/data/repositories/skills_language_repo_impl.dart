@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:graduation_project/core/error/failures.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/data/datasources/skills_languages_remote_data_source.dart';
-import 'package:graduation_project/features/individuals/features/skills_languages/domain/entities/user_profile.dart';
+import 'package:graduation_project/features/individuals/features/skills_languages/domain/entities/skills_and_languages_entity.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/domain/repositories/skills_languages_repository.dart';
 import 'package:injectable/injectable.dart';
 

@@ -1,4 +1,4 @@
-import 'package:graduation_project/features/individuals/features/skills_languages/domain/entities/user_profile.dart';
+import 'package:graduation_project/features/individuals/features/skills_languages/domain/entities/skills_and_languages_entity.dart';
 
 class SkillsAndLanguagesModel extends SkillsAndLanguages {
   SkillsAndLanguagesModel({

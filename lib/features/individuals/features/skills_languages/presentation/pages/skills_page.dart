@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/presentation/cubit/skills_languages_cubit.dart';
 import 'package:graduation_project/features/individuals/features/skills_languages/presentation/cubit/skills_languages_state.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
 
 // Assuming you have these imports from your project structure
 // import 'package:your_project/bloc/skills_languages_cubit.dart';
@@ -13,32 +14,37 @@ class SkillsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          serviceLocator<SkillsLanguagesCubit>()..loadProfile(),
-      child: Scaffold(
-        backgroundColor: const Color(
-          0xFFF5F7FA,
-        ), // Light background for contrast
-        appBar: AppBar(
-          title: const Text("Edit Skills & Languages"),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          titleTextStyle: const TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          iconTheme: const IconThemeData(color: Colors.black),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text("Edit Skills & Languages"),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
-        body: BlocConsumer<SkillsLanguagesCubit, SkillsLanguagesState>(
-          listener: (context, state) {
-            if (state is SkillsLanguagesError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
-            }
-          },
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      // NEW: Listener updates UserCubit whenever the list changes
+      body: BlocListener<SkillsLanguagesCubit, SkillsLanguagesState>(
+        listener: (context, state) {
+          if (state is SkillsLanguagesError) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+          }
+
+          // Sync to Local Storage
+          if (state is SkillsLanguagesLoaded) {
+            context.read<UserCubit>().updateSkillsAndLanguages(
+              state.skillsLanguages.skills,
+              state.skillsLanguages.languages,
+            );
+          }
+        },
+        child: BlocBuilder<SkillsLanguagesCubit, SkillsLanguagesState>(
           builder: (context, state) {
             if (state is SkillsLanguagesLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -56,8 +62,9 @@ class SkillsPage extends StatelessWidget {
                         context.read<SkillsLanguagesCubit>().addSkill(value);
                       },
                       onDelete: (item) {
-                        // Assuming your Cubit has a remove method
-                        context.read<SkillsLanguagesCubit>().removeSkill(item);
+                        context.read<SkillsLanguagesCubit>().removeSkill(
+                          item as String,
+                        );
                       },
                     ),
 
@@ -72,9 +79,8 @@ class SkillsPage extends StatelessWidget {
                         context.read<SkillsLanguagesCubit>().addLanguage(value);
                       },
                       onDelete: (item) {
-                        // Assuming your Cubit has a remove method
                         context.read<SkillsLanguagesCubit>().removeLanguage(
-                          item,
+                          item as String,
                         );
                       },
                     ),
@@ -89,6 +95,7 @@ class SkillsPage extends StatelessWidget {
     );
   }
 }
+
 
 // Reusable Widget for both Skills and Languages cards
 class _SectionCard extends StatefulWidget {

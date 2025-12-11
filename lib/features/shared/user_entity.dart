@@ -18,6 +18,9 @@ class UserEntity extends Equatable {
   final List<WorkExperience> workExperiences;
   final List<Education> educations;
   final List<Certification> certifications;
+  final List<String> skills;
+  final List<String> languages;
+
 
   const UserEntity({
     this.firstName = '',
@@ -32,6 +35,9 @@ class UserEntity extends Equatable {
     this.workExperiences = const [],
     this.educations = const [],
     this.certifications = const [],
+    this.skills = const [],
+    this.languages = const [],
+
   });
 
   UserEntity copyWith({
@@ -47,6 +53,8 @@ class UserEntity extends Equatable {
     List<WorkExperience>? workExperiences,
     List<Education>? educations,
     List<Certification>? certifications,
+    List<String>? skills,
+    List<String>? languages,
     bool forceClearVideo = false,
   }) {
     return UserEntity(
@@ -62,6 +70,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
       workExperiences: workExperiences ?? this.workExperiences,
       educations: educations ?? this.educations,
       certifications: certifications ?? this.certifications,
+      skills: skills ?? this.skills,
+      languages: languages ?? this.languages
     );
   }
 
@@ -80,6 +90,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
     workExperiences,
     educations,
     certifications,
+    skills,
+    languages
   ];
 
   //=========================================================== MAPPING LOGIC ===========================================================
@@ -98,6 +110,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
       'workExperiences': workExperiences.map((x) => x.toMap()).toList(),
       'educations': educations.map((x) => x.toMap()).toList(),
       'certifications': certifications.map((x) => x.toMap()).toList(),
+      'skills': skills,
+      'languages': languages,
     };
   }
 
@@ -113,6 +127,8 @@ videoUrl: forceClearVideo ? null : (videoUrl ?? this.videoUrl),
       summary: map['summary'] ?? '',
       videoUrl: map['videoUrl'],
       avatarUrl: map['avatarUrl'],
+      skills: List<String>.from(map['skills'] ?? []),
+      languages: List<String>.from(map['languages'] ?? []),
       workExperiences: List<WorkExperience>.from(
         (map['workExperiences'] as List<dynamic>? ?? []).map<WorkExperience>(
           (x) => WorkExperience.fromMap(x),

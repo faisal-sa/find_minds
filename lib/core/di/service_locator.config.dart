@@ -141,8 +141,8 @@ import '../../features/individuals/features/job_preferences/presentation/cubit/j
     as _i387;
 import '../../features/individuals/features/skills_languages/data/datasources/skills_languages_remote_data_source.dart'
     as _i354;
-import '../../features/individuals/features/skills_languages/data/repositories/profile_repository_impl.dart'
-    as _i676;
+import '../../features/individuals/features/skills_languages/data/repositories/skills_language_repo_impl.dart'
+    as _i221;
 import '../../features/individuals/features/skills_languages/domain/repositories/skills_languages_repository.dart'
     as _i122;
 import '../../features/individuals/features/skills_languages/presentation/cubit/skills_languages_cubit.dart'
@@ -261,11 +261,6 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i271.WorkExperienceRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
-    gh.lazySingleton<_i122.SkillsLanguagesRepository>(
-      () => _i676.SkillsLanguagesRepositoryImpl(
-        gh<_i354.SkillsLanguagesRemoteDataSource>(),
-      ),
-    );
     gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
       () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
@@ -279,9 +274,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i942.JobPreferencesRepositoryImpl(
         gh<_i466.JobPreferencesRemoteDataSource>(),
       ),
-    );
-    gh.factory<_i201.SkillsLanguagesCubit>(
-      () => _i201.SkillsLanguagesCubit(gh<_i122.SkillsLanguagesRepository>()),
     );
     gh.factory<_i786.CompanyRepository>(
       () => _i624.CompanyRepositoryImpl(gh<_i252.CompanyRemoteDataSource>()),
@@ -403,6 +395,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i476.UpdateJobPreferencesUseCase>(),
       ),
     );
+    gh.lazySingleton<_i122.SkillsLanguagesRepository>(
+      () => _i221.SkillsLanguagesRepositoryImpl(
+        gh<_i354.SkillsLanguagesRemoteDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i591.BasicInfoRepository>(
       () => _i500.BasicInfoRepositoryImpl(gh<_i25.BasicInfoRemoteDataSource>()),
     );
@@ -431,6 +428,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i56.UpdateWorkExperienceUseCase(
         gh<_i651.WorkExperienceRepository>(),
       ),
+    );
+    gh.factory<_i201.SkillsLanguagesCubit>(
+      () => _i201.SkillsLanguagesCubit(gh<_i122.SkillsLanguagesRepository>()),
     );
     gh.factory<_i760.WorkExperienceCubit>(
       () => _i760.WorkExperienceCubit(
