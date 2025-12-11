@@ -23,8 +23,25 @@ class CertificationCubit extends Cubit<CertificationState> {
     this._updateCertificationUseCase,
   ) : super(const CertificationState());
 
+  void initialize(List<Certification> initialCertifications) {
+    if (state.status == ListStatus.initial) {
+      final sortedList = List<Certification>.from(initialCertifications)
+        ..sort(
+          (a, b) => b.issueDate.compareTo(a.issueDate),
+        ); // Sort by newest first
+
+      emit(
+        CertificationState(
+          status: ListStatus.success,
+          certifications: sortedList,
+        ),
+      );
+    }
+  }
+
+  // Keep loadCertifications for pull-to-refresh if needed, but not for initial load
   Future<void> loadCertifications() async {
-    emit(const CertificationState(status: ListStatus.loading));
+    emit(state.copyWith(status: ListStatus.loading));
     try {
       final list = await _getCertificationsUseCase();
       emit(

@@ -219,14 +219,23 @@ final GoRouter router = GoRouter(
                     );
                   },
                 ),
-                GoRoute(
+GoRoute(
                   path: 'certification',
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
+                    // 1. Get UserCubit
+                    final userCubit = serviceLocator.get<UserCubit>();
+                    // 2. Extract existing certifications from UserEntity
+                    final initialCertifications =
+                        userCubit.state.user.certifications;
+
                     return BlocProvider(
-                      create: (context) =>
-                          serviceLocator.get<CertificationCubit>()
-                            ..loadCertifications(),
+                      create: (context) {
+                        final cubit = serviceLocator.get<CertificationCubit>();
+                        // 3. Initialize Cubit with local data instead of calling loadCertifications()
+                        cubit.initialize(initialCertifications);
+                        return cubit;
+                      },
                       child: const CertificationPage(),
                     );
                   },

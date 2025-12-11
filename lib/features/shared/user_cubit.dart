@@ -125,6 +125,13 @@ class UserCubit extends Cubit<UserState> {
     emit(state.copyWith(user: updatedUser));
   }
 
+void updateCertificationsList(List<Certification> certifications) {
+    // Create a copy of the current user with the updated certifications list
+    final updatedUser = state.user.copyWith(certifications: certifications);
+
+    // Emit the new state (this triggers onChange, which saves to SharedPreferences)
+    emit(state.copyWith(user: updatedUser));
+  }
   void updateBasicInfo({
     String? firstName,
     String? lastName,

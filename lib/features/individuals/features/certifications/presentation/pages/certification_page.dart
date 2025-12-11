@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/certifications/domain/entities/certification.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_cubit.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/cubit/certification_state.dart';
 import 'package:graduation_project/features/individuals/features/certifications/presentation/widgets/add_certification_modal.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/work_experience_state.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/custom_dashed_box.dart';
+import 'package:graduation_project/features/shared/user_cubit.dart';
 import 'package:intl/intl.dart';
 
 class CertificationPage extends StatelessWidget {
@@ -41,63 +43,75 @@ class CertificationPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<CertificationCubit, CertificationState>(
-        builder: (context, state) {
-          if (state.status == ListStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.status == ListStatus.failure) {
-            return Center(
-              child: Text(state.errorMessage ?? "Error loading data"),
+      // NEW: Add BlocListener here
+      body: BlocListener<CertificationCubit, CertificationState>(
+        listener: (context, state) {
+          // Sync changes back to UserCubit (Local Storage)
+          if (state.status == ListStatus.success ||
+              (state.certifications.isNotEmpty &&
+                  state.status != ListStatus.loading)) {
+            serviceLocator.get<UserCubit>().updateCertificationsList(
+              state.certifications,
             );
           }
-
-          final list = state.certifications;
-
-          if (list.isEmpty) {
-            return Padding(
-              padding: EdgeInsets.all(24.w),
-              child: Center(
-                child: EmptyStateView(
-                  icon: Icons.workspace_premium_outlined,
-                  message: "No certifications listed.\nTap to add one.",
-                  onTap: handleAddCertification,
-                ),
-              ),
-            );
-          }
-
-          return ListView.separated(
-            padding: EdgeInsets.all(24.w),
-            itemCount: list.length,
-            separatorBuilder: (_, __) => SizedBox(height: 16.h),
-            itemBuilder: (context, index) {
-              final cert = list[index];
-              return _CertificationCard(
-                certification: cert,
-                onDelete: () => context
-                    .read<CertificationCubit>()
-                    .deleteCertification(cert.id),
-                onEdit: () async {
-                  final result = await AddCertificationModal.show(
-                    context,
-                    cert,
-                  );
-                  if (result != null && context.mounted) {
-                    context.read<CertificationCubit>().updateCertification(
-                      result,
-                    );
-                  }
-                },
-              );
-            },
-          );
         },
+        child: BlocBuilder<CertificationCubit, CertificationState>(
+          builder: (context, state) {
+            if (state.status == ListStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.status == ListStatus.failure) {
+              return Center(
+                child: Text(state.errorMessage ?? "Error loading data"),
+              );
+            }
+
+            final list = state.certifications;
+
+            if (list.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.all(24.w),
+                child: Center(
+                  child: EmptyStateView(
+                    icon: Icons.workspace_premium_outlined,
+                    message: "No certifications listed.\nTap to add one.",
+                    onTap: handleAddCertification,
+                  ),
+                ),
+              );
+            }
+
+            return ListView.separated(
+              padding: EdgeInsets.all(24.w),
+              itemCount: list.length,
+              separatorBuilder: (_, __) => SizedBox(height: 16.h),
+              itemBuilder: (context, index) {
+                final cert = list[index];
+                return _CertificationCard(
+                  certification: cert,
+                  onDelete: () => context
+                      .read<CertificationCubit>()
+                      .deleteCertification(cert.id),
+                  onEdit: () async {
+                    final result = await AddCertificationModal.show(
+                      context,
+                      cert,
+                    );
+                    if (result != null && context.mounted) {
+                      context.read<CertificationCubit>().updateCertification(
+                        result,
+                      );
+                    }
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
 }
-
 class _CertificationCard extends StatelessWidget {
   final Certification certification;
   final VoidCallback onDelete;
