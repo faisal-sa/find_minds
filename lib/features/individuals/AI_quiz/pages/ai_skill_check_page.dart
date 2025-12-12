@@ -5,7 +5,7 @@ import 'package:graduation_project/features/individuals/AI_quiz/cubit/ai_skill_c
 import 'package:graduation_project/features/individuals/AI_quiz/cubit/ai_skill_check_state.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/quiz_view.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/result_view.dart';
-import 'package:graduation_project/features/shared/user_entity.dart';
+import 'package:graduation_project/features/shared/domain/entities/user_entity.dart';
 
 class AiSkillCheckPage extends StatelessWidget {
   final UserEntity user;

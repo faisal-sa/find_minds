@@ -8,7 +8,7 @@ import 'package:graduation_project/features/individuals/features/certifications/
 import 'package:graduation_project/features/individuals/features/education/domain/entities/education.dart';
 import 'package:graduation_project/features/individuals/features/job_preferences/domain/entities/job_preferences_entity.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/domain/entities/work_experience.dart';
-import 'package:graduation_project/features/shared/user_entity.dart';
+import 'package:graduation_project/features/shared/domain/entities/user_entity.dart';
 import 'package:graduation_project/features/shared/user_state.dart';
 import 'package:graduation_project/main.dart';
 import 'package:injectable/injectable.dart';
@@ -25,11 +25,6 @@ class UserCubit extends Cubit<UserState> {
   UserCubit(this._prefs, this._supabase) : super(const UserState()) {
     loadUserFromStorage();
   }
-
-
-
-
-
 
 
 
@@ -75,52 +70,6 @@ class UserCubit extends Cubit<UserState> {
   void setInitialUserData(UserEntity user) {
     emit(state.copyWith(user: user));
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // =========================================================== CHANGING STATE LOGIC ===========================================================
 
@@ -317,33 +266,6 @@ void updateBasicInfo({
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //=========================================================== CV ANALYSIS LOGIC ============================================================
   Future<void> uploadAndExtractResume() async {
     await _handleResumeUploadAndExtraction();
@@ -459,11 +381,4 @@ void updateBasicInfo({
       );
     }
   }
-
-
-
-
-
-
-
 }

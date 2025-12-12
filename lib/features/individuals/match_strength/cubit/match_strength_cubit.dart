@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/match_strength/cubit/match_strength_state.dart';
-import 'package:graduation_project/features/shared/user_entity.dart';
+import 'package:graduation_project/features/shared/domain/entities/user_entity.dart';
 import 'package:graduation_project/main.dart';
 
 class MatchStrengthCubit extends Cubit<MatchStrengthState> {

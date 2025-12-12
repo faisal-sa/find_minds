@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/cubit/ai_skill_check_state.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/models/quiz_question.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/models/skill_category_result.dart';
-import 'package:graduation_project/features/shared/user_entity.dart';
+import 'package:graduation_project/features/shared/domain/entities/user_entity.dart';
 import 'package:graduation_project/main.dart';
 
 class AiSkillCheckCubit extends Cubit<AiSkillCheckState> {

@@ -6,9 +6,9 @@ import 'package:graduation_project/features/individuals/features/work_experience
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'user_entity.freezed.dart';
+part '../../user_entity.freezed.dart';
 
-part 'user_entity.g.dart';
+part '../../user_entity.g.dart';
 
 // 1. Define this helper function outside the class
 // It tells the parser: "Ignore the key 'jobPreferences', take the WHOLE JSON map instead."
@@ -51,3 +51,4 @@ abstract class UserEntity with _$UserEntity {
   factory UserEntity.fromJson(Map<String, dynamic> json) =>
       _$UserEntityFromJson(json);
 }
+//remove from json
