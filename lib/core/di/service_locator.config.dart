@@ -74,6 +74,8 @@ import '../../features/CRinfo/domain/repositories/cr_info_repository.dart'
     as _i861;
 import '../../features/CRinfo/domain/usecases/get_cr_info.dart' as _i333;
 import '../../features/CRinfo/presentation/cubit/cr_info_cubit.dart' as _i550;
+import '../../features/individuals/match_strength/cubit/match_strength_cubit.dart'
+    as _i406;
 import '../../features/individuals/profile/routes/about_me/data/datasources/about_me_remote_data_source.dart'
     as _i950;
 import '../../features/individuals/profile/routes/about_me/data/repositories/about_me_repository_impl.dart'
@@ -264,6 +266,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i161.AuthRemoteDataSource>(
       () => _i161.AuthRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i406.MatchStrengthCubit>(
+      () => _i406.MatchStrengthCubit(model: gh<_i187.GenerativeModel>()),
     );
     gh.factory<_i57.GetCandidateProfileUseCase>(
       () => _i57.GetCandidateProfileUseCase(gh<_i309.CandidateRepository>()),

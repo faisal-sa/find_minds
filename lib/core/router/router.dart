@@ -1,3 +1,4 @@
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/features/CRinfo/presentation/cubit/cr_info_cubit.dart';
 import 'package:graduation_project/features/candidate_details/presentation/screens/candidate_profile_page.dart';
@@ -103,11 +104,16 @@ final GoRouter router = GoRouter(
 
                     return BlocProvider(
                       create: (context) {
-                        final cubit = MatchStrengthCubit();
+                        final cubit = MatchStrengthCubit(
+                          model: serviceLocator.get<GenerativeModel>(),
+                        );
                         cubit.analyzeProfile(currentUser);
                         return cubit;
                       },
-                      child: MatchStrengthPage(jobTitle: currentUser.jobTitle),
+                      child: MatchStrengthPage(
+                        jobTitle: currentUser.jobTitle,
+                        userEntity: currentUser,
+                      ),
                     );
                   },
                 ),

@@ -5,50 +5,73 @@ import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/features/individuals/match_strength/cubit/match_strength_state.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/entities/user_entity.dart';
-import 'package:graduation_project/main.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class MatchStrengthCubit extends Cubit<MatchStrengthState> {
+  final GenerativeModel model; 
 
-  MatchStrengthCubit() : super(MatchStrengthInitial());
-
-  
+  MatchStrengthCubit({required this.model}) : super(MatchStrengthInitial());
 
   Future<void> analyzeProfile(UserEntity userEntity) async {
     emit(MatchStrengthLoading());
 
     try {
       final jobTitle = userEntity.jobTitle.isNotEmpty ? userEntity.jobTitle : "General Role";
-      
-      final experienceString = userEntity.workExperiences.map((e) {
-        return "Role: ${e.jobTitle} at ${e.companyName}. Description: ${e.responsibilities}";
-      }).join("\n");
 
-      final educationString = userEntity.educations.map((e) {
-        return "Degree: ${e.fieldOfStudy} at ${e.institutionName}";
-      }).join("\n");
+      // 1. Prepare Data (Include Skills and Certs now!)
+      final experienceString = userEntity.workExperiences.isNotEmpty
+          ? userEntity.workExperiences
+                .map(
+                  (e) =>
+                      "Role: ${e.jobTitle} at ${e.companyName}. Description: ${e.responsibilities.join(', ')}",
+                )
+                .join("\n")
+          : "No specific work experience listed.";
 
-      // 2. Construct Prompt
+      final educationString = userEntity.educations.isNotEmpty
+          ? userEntity.educations
+                .map((e) => "Degree: ${e.fieldOfStudy} at ${e.institutionName}")
+                .join("\n")
+          : "No formal education listed.";
+
+      final skillsString = userEntity.skills.isNotEmpty
+          ? userEntity.skills.join(", ")
+          : "No specific skills listed.";
+
+      final certString = userEntity.certifications.isNotEmpty
+          ? userEntity.certifications
+                .map((c) => "${c.name} from ${c.issuingInstitution}")
+                .join("\n")
+          : "No certifications.";
+
+      // 2. Construct Enhanced Prompt
       final prompt = '''
-        You are a Career ATS AI. Analyze this candidate for the target role: "$jobTitle".
+        Act as an expert ATS (Applicant Tracking System) AI. 
+        Analyze this candidate for the target role: "$jobTitle".
         
-        Candidate Data:
+        CANDIDATE DATA:
         Summary: ${userEntity.summary}
+        Skills: $skillsString
         Experience: $experienceString
         Education: $educationString
+        Certifications: $certString
         
-        Return a valid JSON object with NO markdown formatting.
-        Structure:
+        TASK:
+        Compare the candidate's data against standard industry requirements for a "$jobTitle".
+        
+        Return valid JSON ONLY. No markdown, no explanations.
         {
-          "score": (integer 0-100),
-          "strengths": ["list of 3 key strengths based on data"],
+          "score": (integer 0-100 based on keyword match and experience relevance),
+          "strengths": ["List of 3 distinct, short key selling points"],
           "improvements": [
             {
-              "issue": "Brief description of missing skill or gap",
-              "action": "Short recommendation (e.g., 'View relevant courses' or 'Explore learning paths')"
+              "issue": "Specific missing hard skill or gap (Max 6 words)",
+              "action": "Specific 3-5 word recommendation (e.g. 'Learn SQL', 'Get PMP Cert')"
             },
-             {
-              "issue": "Brief description of another gap",
-              "action": "Short recommendation"
+            {
+              "issue": "Another gap",
+              "action": "Actionable advice"
             }
           ]
         }
@@ -64,12 +87,25 @@ class MatchStrengthCubit extends Cubit<MatchStrengthState> {
         return;
       }
 
-      // 4. Parse JSON (Handle potential markdown wrappers)
-      String jsonString = responseText.replaceAll('```json', '').replaceAll('```', '').trim();
+      // 4. Robust Parsing
+      // Removes ```json and ``` and trims whitespace
+      final cleanedJson = responseText
+          .replaceAll(RegExp(r'```json|```'), '')
+          .trim();
+
+      // Find the first '{' and last '}' to ensure we only parse the JSON object
+      final startIndex = cleanedJson.indexOf('{');
+      final endIndex = cleanedJson.lastIndexOf('}');
+
+      if (startIndex == -1 || endIndex == -1) {
+        throw FormatException("Invalid JSON format received");
+      }
+
+      final jsonString = cleanedJson.substring(startIndex, endIndex + 1);
       final data = jsonDecode(jsonString);
 
       emit(MatchStrengthLoaded(
-        score: data['score'] as int,
+          score: (data['score'] as num).toInt(),
         strengths: List<String>.from(data['strengths'] ?? []),
         improvements: List<Map<String, String>>.from(
           (data['improvements'] as List).map((item) => {
