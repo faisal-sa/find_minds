@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:graduation_project/app/widgets/custom_text_field.dart';
-import 'package:graduation_project/app/widgets/saving_button.dart';
-import 'package:graduation_project/features/individuals/features/shared/widgets/dynamic_list_section.dart';
+import 'package:graduation_project/features/individuals/features/shared/widgets/saving_button.dart';
+import 'package:graduation_project/features/individuals/features/shared/widgets/custom_text_field.dart';
 import '../../domain/entities/job_preferences_entity.dart';
 import '../cubit/job_preferences_cubit.dart';
 
