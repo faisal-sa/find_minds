@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/features/individuals/profile/routes/certifications/domain/entities/certification.dart';
 import 'package:intl/intl.dart';
-
 class CertificationCard extends StatelessWidget {
   final Certification certification;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
-  const CertificationCard({super.key, 
+  const CertificationCard({
+    super.key,
     required this.certification,
     required this.onDelete,
     required this.onEdit,
@@ -23,6 +23,13 @@ class CertificationCard extends StatelessWidget {
       dateStr =
           "${fmt.format(certification.issueDate)} - ${fmt.format(certification.expirationDate!)}";
     }
+
+    // --- FIX: Check for Local File OR Remote URL ---
+    final bool hasAttachment =
+        certification.credentialFile != null ||
+        (certification.credentialUrl != null &&
+            certification.credentialUrl!.isNotEmpty);
+    // -----------------------------------------------
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -101,8 +108,8 @@ class CertificationCard extends StatelessWidget {
             ],
           ),
 
-          // Attachments Indicator
-          if (certification.credentialFile != null)
+          // --- FIX: Use the boolean we calculated above ---
+          if (hasAttachment)
             Padding(
               padding: EdgeInsets.only(top: 12.h),
               child: Container(

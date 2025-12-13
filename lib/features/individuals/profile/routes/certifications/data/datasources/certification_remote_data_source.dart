@@ -37,62 +37,99 @@ class CertificationRemoteDataSourceImpl
 
   @override
   Future<CertificationModel> addCertification(CertificationModel model) async {
+    // 1. Prepare data
     final data = model.toJson();
-    // Remove ID so Postgres generates a new UUID
     if (model.id.isEmpty) {
       data.remove('id');
     }
 
-    // select().single() returns the inserted row with the new generated ID
+    // 2. Insert into Database first to get the ID (or use the one provided)
     final response = await _client
         .from('certifications')
         .insert(data)
         .select()
         .single();
 
-    return CertificationModel.fromJson(response);
-  }
+    CertificationModel insertedModel = CertificationModel.fromJson(response);
 
-  @override
-  Future<void> updateCertification(
-    CertificationModel model, {
-    File? newFile,
-  }) async {
-    CertificationModel modelToUpdate = model;
-
-    // If a new file is provided, we need to swap the old file for the new one
-    if (newFile != null) {
-      // 1. Fetch the CURRENT database record to get the OLD URL
-      final oldRecord = await _client
-          .from('certifications')
-          .select('credential_url')
-          .eq('id', model.id)
-          .single();
-
-      final String? oldUrl = oldRecord['credential_url'];
-
-      // 2. Upload the NEW file
+    // 3. --- FIX: Check for File and Upload ---
+    if (model.credentialFile != null) {
       final userId = _client.auth.currentUser!.id;
-      final newUrl = await uploadCredentialFile(newFile, userId);
 
-      // 3. Update the model object using copyWith
-      // This creates a new object with the new URL, keeping all other data the same
-      modelToUpdate = model.copyWith(credentialUrl: newUrl);
+      // Upload using the helper you already wrote
+      final String publicUrl = await uploadCredentialFile(
+        model.credentialFile!,
+        userId,
+      );
 
-      // 4. Delete the OLD file from storage (cleanup)
-      if (oldUrl != null) {
+      // Update the database record with the new URL
+      await _client
+          .from('certifications')
+          .update({'credential_url': publicUrl})
+          .eq('id', insertedModel.id);
+
+      // Return the model with the URL attached
+      insertedModel = insertedModel.copyWith(credentialUrl: publicUrl);
+    }
+    // -----------------------------------------
+
+    return insertedModel;
+  }
+  @override
+  Future<void> updateCertification(CertificationModel model) async {
+    // Remove {File? newFile}
+    
+    // 1. Fetch the CURRENT database record to get the OLD URL
+    // We need this to know if we should delete an old file from storage.
+    final oldRecord = await _client
+        .from('certifications')
+        .select('credential_url')
+        .eq('id', model.id)
+        .single();
+
+    final String? oldUrl = oldRecord['credential_url'];
+    
+    // This will be the final URL we save to the DB
+    String? finalUrl = model.credentialUrl;
+
+    // CASE A: User selected a NEW file (Replacement or New Upload)
+    if (model.credentialFile != null) {
+      final userId = _client.auth.currentUser!.id;
+      
+      // Upload the new file
+      finalUrl = await uploadCredentialFile(model.credentialFile!, userId);
+
+      // If there was an old file, delete it to save space
+      if (oldUrl != null && oldUrl.isNotEmpty) {
         final oldPath = _extractPathFromUrl(oldUrl);
         if (oldPath != null) {
           await _client.storage.from(_bucketName).remove([oldPath]);
         }
       }
     }
+    // CASE B: User REMOVED the file (URL is null, File is null, but Old URL existed)
+    else if (model.credentialUrl == null && oldUrl != null) {
+      // The user clicked "Clear" in the UI, so we must delete the file from storage
+      final oldPath = _extractPathFromUrl(oldUrl);
+      if (oldPath != null) {
+        await _client.storage.from(_bucketName).remove([oldPath]);
+      }
+      finalUrl = null;
+    }
+    // CASE C: No changes to file (File is null, URL matches old URL).
+    // Do nothing regarding storage.
 
-    // 5. Update Database with the updated model
+    // 2. Prepare Data for Update
+    final data = model.toJson();
+    data['credential_url'] = finalUrl; // Ensure the correct URL is set
+    
+    // Remove ID from the body (cannot update the primary key)
+    data.remove('id');
+
+    // 3. Update Database
     await _client
         .from('certifications')
-        .update(modelToUpdate.toJson())
-        .eq('id', modelToUpdate.id);
+        .update(data).eq('id', model.id);
   }
   @override
   Future<void> deleteCertification(String id) async {

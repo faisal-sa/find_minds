@@ -41,8 +41,10 @@ abstract class CertificationModel with _$CertificationModel {
       issueDate: certification.issueDate,
       expirationDate: certification.expirationDate,
       credentialUrl: uploadedUrl ?? certification.credentialUrl,
-      credentialFile:
-          null, // Models usually don't hold the local file after conversion
+    
+      // --- FIX: Pass the file through! ---
+      credentialFile: certification.credentialFile,
+      // -----------------------------------
     );
   }
   Certification toEntity() {

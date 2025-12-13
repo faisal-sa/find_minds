@@ -111,19 +111,22 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
       return;
     }
 
-    // CHANGED: Determine which file to save
     File? fileToSave;
+    String? urlToSave =
+        widget.certification?.credentialUrl; // Default to existing URL
 
-    // 1. If a new file was picked, use it.
+    // 1. If a new file was picked
     if (_pickedFile != null && _pickedFile!.path != null) {
       fileToSave = File(_pickedFile!.path!);
+      urlToSave =
+          null; // Clear URL because we have a new local file waiting to upload
     }
-    // 2. If no new file, but we haven't removed the old one, keep the old one.
-    else if (!_isExistingFileRemoved &&
-        widget.certification?.credentialFile != null) {
-      fileToSave = widget.certification!.credentialFile;
+    // 2. If removed explicitly
+    else if (_isExistingFileRemoved) {
+      fileToSave = null;
+      urlToSave = null;
     }
-    // 3. Otherwise (removed or never existed), it stays null.
+    // 3. Else (No change), keep existing fileToSave (if local) or urlToSave (if remote) stays as is.
 
     final newCertification = Certification(
       id: widget.certification?.id ?? const Uuid().v4(),
@@ -132,6 +135,7 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
       issueDate: _issueDate!,
       expirationDate: _expirationDate,
       credentialFile: fileToSave,
+      credentialUrl: urlToSave, // Pass this back so we don't lose it!
     );
 
     Navigator.pop(context, newCertification);
@@ -141,12 +145,14 @@ class _AddCertificationModalState extends State<AddCertificationModal> {
   Widget build(BuildContext context) {
     final isEditing = widget.certification != null;
 
-    // Helper to determine what to show in the button
-    final bool hasExistingFile =
+    // --- FIX: Check both Local File AND Remote URL ---
+    final bool hasLocalFile =
         !_isExistingFileRemoved && widget.certification?.credentialFile != null;
+    final bool hasRemoteUrl =
+        !_isExistingFileRemoved && widget.certification?.credentialUrl != null;
 
-    // Pass a dummy string to 'existingUrl' if we have a local File,
-    // just to trigger the "File Attached" UI state in your button.
+    final bool hasExistingFile = hasLocalFile || hasRemoteUrl;
+
     final String? existingFileIndicator = hasExistingFile
         ? "Existing File"
         : null;
