@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/app/widgets/custom_text_field.dart';
 import 'package:graduation_project/app/widgets/saving_button.dart';
 import 'package:graduation_project/features/individuals/features/basic_info/presentation/cubit/basic_info_cubit.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 
 import '../../../../../../core/constants/cities.dart';
 import '../../../shared/widgets/custom_dropdown_field.dart';

@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:firebase_ai/firebase_ai.dart' as _i187;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -171,7 +172,24 @@ import '../../features/payment/domain/usecases/process_payment_usecase.dart'
     as _i432;
 import '../../features/payment/export_payment.dart' as _i903;
 import '../../features/payment/presentation/cubit/payment_cubit.dart' as _i513;
-import '../../features/shared/user_cubit.dart' as _i171;
+import '../../features/shared/data/datasources/AI_datasource.dart' as _i741;
+import '../../features/shared/data/datasources/user_local_datasource.dart'
+    as _i156;
+import '../../features/shared/data/datasources/user_remote_datasource.dart'
+    as _i390;
+import '../../features/shared/data/repositories/user_repository_impl.dart'
+    as _i310;
+import '../../features/shared/domain/repositories/user_repository.dart'
+    as _i223;
+import '../../features/shared/domain/usecases/cache_user.dart' as _i210;
+import '../../features/shared/domain/usecases/fetch_user_profile.dart' as _i439;
+import '../../features/shared/domain/usecases/get_cached_user.dart' as _i597;
+import '../../features/shared/domain/usecases/parse_resume_with_ai.dart'
+    as _i372;
+import '../../features/shared/domain/usecases/sync_user_to_remote.dart'
+    as _i1043;
+import '../../features/shared/domain/usecases/update_user.dart' as _i228;
+import '../../features/shared/presentation/cubit/user_cubit.dart' as _i695;
 import '../env_config/env_config.dart' as _i113;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -190,11 +208,23 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.prefs,
       preResolve: true,
     );
+    gh.lazySingleton<_i187.GenerativeModel>(
+      () => registerModule.generativeModel,
+    );
+    gh.factory<_i156.UserLocalDataSource>(
+      () => _i156.UserLocalDataSource(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i149.CandidateRemoteDataSource>(
       () => _i149.CandidateRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
     );
     gh.lazySingleton<_i252.CompanyRemoteDataSource>(
       () => _i252.CompanyRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i390.UserRemoteDataSource>(
+      () => _i390.UserRemoteDataSource(gh<_i454.SupabaseClient>()),
+    );
+    gh.factory<_i741.AIDataSource>(
+      () => _i741.AIDataSource(gh<_i187.GenerativeModel>()),
     );
     gh.lazySingleton<_i309.CandidateRepository>(
       () =>
@@ -243,6 +273,31 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1061.CandidateProfileCubit>(
       () => _i1061.CandidateProfileCubit(gh<_i309.CandidateRepository>()),
     );
+    gh.lazySingleton<_i223.UserRepository>(
+      () => _i310.UserRepositoryImpl(
+        remoteDataSource: gh<_i390.UserRemoteDataSource>(),
+        localDataSource: gh<_i156.UserLocalDataSource>(),
+        aiDataSource: gh<_i741.AIDataSource>(),
+      ),
+    );
+    gh.factory<_i210.CacheUser>(
+      () => _i210.CacheUser(gh<_i223.UserRepository>()),
+    );
+    gh.factory<_i439.FetchUserProfile>(
+      () => _i439.FetchUserProfile(gh<_i223.UserRepository>()),
+    );
+    gh.factory<_i597.GetCachedUser>(
+      () => _i597.GetCachedUser(gh<_i223.UserRepository>()),
+    );
+    gh.factory<_i372.ParseResumeWithAI>(
+      () => _i372.ParseResumeWithAI(gh<_i223.UserRepository>()),
+    );
+    gh.factory<_i1043.SyncUserToRemote>(
+      () => _i1043.SyncUserToRemote(gh<_i223.UserRepository>()),
+    );
+    gh.factory<_i228.UpdateUser>(
+      () => _i228.UpdateUser(gh<_i223.UserRepository>()),
+    );
     gh.lazySingleton<_i843.EducationRepository>(
       () =>
           _i999.EducationRepositoryImpl(gh<_i380.EducationRemoteDataSource>()),
@@ -263,12 +318,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i25.BasicInfoRemoteDataSource>(
       () => _i25.BasicInfoRemoteDataSourceImpl(gh<_i454.SupabaseClient>()),
-    );
-    gh.lazySingleton<_i171.UserCubit>(
-      () => _i171.UserCubit(
-        gh<_i460.SharedPreferences>(),
-        gh<_i454.SupabaseClient>(),
-      ),
     );
     gh.lazySingleton<_i248.JobPreferencesRepository>(
       () => _i942.JobPreferencesRepositoryImpl(
@@ -294,6 +343,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i742.VerifyCompanyQR>(
       () => _i742.VerifyCompanyQR(gh<_i786.CompanyRepository>()),
+    );
+    gh.lazySingleton<_i695.UserCubit>(
+      () => _i695.UserCubit(
+        gh<_i597.GetCachedUser>(),
+        gh<_i210.CacheUser>(),
+        gh<_i439.FetchUserProfile>(),
+        gh<_i372.ParseResumeWithAI>(),
+        gh<_i454.SupabaseClient>(),
+      ),
     );
     gh.lazySingleton<_i965.AddEducationUseCase>(
       () => _i965.AddEducationUseCase(gh<_i843.EducationRepository>()),

@@ -192,6 +192,7 @@ final GoRouter router = GoRouter(
                     final userCubit = serviceLocator.get<UserCubit>();
                     final initialExperiences =
                         userCubit.state.user.workExperiences;
+                        
                     return BlocProvider(
                       create: (context) {
                         final cubit = serviceLocator.get<WorkExperienceCubit>();

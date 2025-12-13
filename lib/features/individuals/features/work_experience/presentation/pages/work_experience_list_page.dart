@@ -7,7 +7,7 @@ import 'package:graduation_project/features/individuals/features/work_experience
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/work_experience_state.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/add_work_experience_modal.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/experience_card.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 
 class WorkExperienceListPage extends StatelessWidget {
   const WorkExperienceListPage({super.key});

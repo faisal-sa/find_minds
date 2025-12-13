@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/job_preferences/presentation/cubit/job_preferences_cubit.dart';
 import 'package:graduation_project/features/individuals/features/job_preferences/presentation/pages/job_preferences_view.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 
 class JobPreferencesPage extends StatelessWidget {
   const JobPreferencesPage({super.key});

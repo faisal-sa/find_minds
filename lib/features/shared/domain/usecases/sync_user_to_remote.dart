@@ -3,8 +3,12 @@ import 'package:graduation_project/features/shared/domain/repositories/user_repo
 import 'package:injectable/injectable.dart';
 
 @injectable
-class FetchUserProfile {
+class SyncUserToRemote {
   final UserRepository repository;
-  FetchUserProfile(this.repository);
-  Future<UserEntity> call(String userId) => repository.fetchRemoteProfile(userId);
+  SyncUserToRemote(this.repository);
+  
+  Future<void> call(UserEntity user) async {
+    await repository.updateRemoteProfile(user);
+    await repository.cacheUser(user);
+  }
 }

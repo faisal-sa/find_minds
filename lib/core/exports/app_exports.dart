@@ -58,6 +58,6 @@ export 'package:graduation_project/features/auth/presentation/pages/signup_page.
 export 'package:graduation_project/features/auth/presentation/pages/otp_verification_page.dart';
 
 // Shared
-export 'package:graduation_project/features/shared/user_cubit.dart';
+export 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 
 

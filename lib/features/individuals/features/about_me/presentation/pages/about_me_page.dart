@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/about_me/presentation/cubit/about_me_cubit.dart';
 import 'package:graduation_project/features/individuals/features/about_me/presentation/cubit/about_me_state.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AboutMePage extends StatelessWidget {

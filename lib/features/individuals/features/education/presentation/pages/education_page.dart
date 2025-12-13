@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/features/individuals/features/education/presentation/widgets/education_card.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 
 import '../cubit/education_cubit.dart';
 import '../cubit/education_state.dart';

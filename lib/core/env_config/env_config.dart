@@ -1,3 +1,4 @@
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
@@ -37,6 +38,8 @@ abstract class RegisterModule {
   Future<SharedPreferences> get prefs async {
     return await SharedPreferences.getInstance();
   }
-
+  @lazySingleton
+  GenerativeModel get generativeModel =>
+      FirebaseAI.googleAI().generativeModel(model: 'gemini-2.5-flash-lite');
 
 }

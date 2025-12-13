@@ -9,8 +9,8 @@ import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.d
 import 'package:graduation_project/features/individuals/engagement/presentation/widgets/engagement_section.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/feature_card.dart';
 import 'package:graduation_project/features/individuals/insights/presentation/widgets/locked_feature_card.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
-import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_state.dart';
 
 class InsightsTab extends StatelessWidget {
   const InsightsTab({super.key});

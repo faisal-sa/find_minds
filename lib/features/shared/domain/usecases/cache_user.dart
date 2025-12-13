@@ -3,8 +3,8 @@ import 'package:graduation_project/features/shared/domain/repositories/user_repo
 import 'package:injectable/injectable.dart';
 
 @injectable
-class FetchUserProfile {
+class CacheUser {
   final UserRepository repository;
-  FetchUserProfile(this.repository);
-  Future<UserEntity> call(String userId) => repository.fetchRemoteProfile(userId);
+  CacheUser(this.repository);
+  Future<void> call(UserEntity user) => repository.cacheUser(user);
 }

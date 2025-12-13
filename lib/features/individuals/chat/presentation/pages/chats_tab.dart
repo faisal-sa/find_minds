@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graduation_project/core/theme/theme.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
-import 'package:graduation_project/features/shared/user_state.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_state.dart';
 
 class ChatsTab extends StatelessWidget {
   const ChatsTab({super.key});

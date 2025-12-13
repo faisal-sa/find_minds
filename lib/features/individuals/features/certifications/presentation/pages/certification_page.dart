@@ -8,7 +8,7 @@ import 'package:graduation_project/features/individuals/features/certifications/
 import 'package:graduation_project/features/individuals/features/certifications/presentation/widgets/add_certification_modal.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/cubit/work_experience_state.dart';
 import 'package:graduation_project/features/individuals/features/work_experience/presentation/widgets/custom_dashed_box.dart';
-import 'package:graduation_project/features/shared/user_cubit.dart';
+import 'package:graduation_project/features/shared/presentation/cubit/user_cubit.dart';
 import 'package:intl/intl.dart';
 
 class CertificationPage extends StatelessWidget {
