@@ -46,7 +46,10 @@ class CardInputForm extends StatelessWidget {
               return null;
             },
           ),
-          const SizedBox(height: 12),
+
+          // Increased spacing for a cleaner look
+          const SizedBox(height: 20),
+
           FormTextField(
             controller: cubit.cardNumberController,
             label: 'Card Number',
@@ -69,8 +72,13 @@ class CardInputForm extends StatelessWidget {
               return null;
             },
           ),
-          const SizedBox(height: 12),
+
+          // Increased spacing
+          const SizedBox(height: 20),
+
           Row(
+            // Aligns inputs to the top so they stay even if one has an error message
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: FormTextField(
@@ -93,7 +101,8 @@ class CardInputForm extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              // Increased horizontal spacing
+              const SizedBox(width: 16),
               Expanded(
                 child: FormTextField(
                   controller: cubit.cardYearController,
@@ -116,13 +125,14 @@ class CardInputForm extends StatelessWidget {
                       return 'Expired';
                     }
                     if (year > currentYear + 20) {
-                      return 'Too far in future';
+                      return 'Too far'; // Shortened slightly to fit better
                     }
                     return null;
                   },
                 ),
               ),
-              const SizedBox(width: 12),
+              // Increased horizontal spacing
+              const SizedBox(width: 16),
               Expanded(
                 child: FormTextField(
                   controller: cubit.cardCvcController,
@@ -137,7 +147,7 @@ class CardInputForm extends StatelessWidget {
                       return 'Required';
                     }
                     if (!RegExp(r'^\d{3,4}$').hasMatch(value)) {
-                      return 'Invalid CVC';
+                      return 'Invalid';
                     }
                     return null;
                   },

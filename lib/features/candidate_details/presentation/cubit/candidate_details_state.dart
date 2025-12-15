@@ -9,6 +9,7 @@ class CandidateProfileState with _$CandidateProfileState {
   const factory CandidateProfileState.loading() = _Loading;
   const factory CandidateProfileState.loaded(CandidateProfileEntity profile) =
       _Loaded;
+  // Added unlocking state to handle the spinner during the API call
   const factory CandidateProfileState.unlocking() = _Unlocking;
   const factory CandidateProfileState.error(String message) = _Error;
 }

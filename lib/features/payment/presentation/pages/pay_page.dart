@@ -9,33 +9,34 @@ class PayPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      // Use a very subtle off-white for the whole page
+      backgroundColor: Colors.grey[50],
 
       //==================  App Bar  =================== //
       appBar: AppBar(
-        title: const Text('Payment'),
-        backgroundColor: const Color(0xFF1E1E1E),
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Payment',
+          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        // Matching the dark brand color from your previous TextField focused border
+        backgroundColor: const Color.fromARGB(255, 249, 249, 250),
+        foregroundColor: Colors.black,
       ),
 
       //==================  Body  ===================//
       body: BlocListener<PaymentCubit, PaymentState>(
-        // في ملف features/payment/presentation/pages/pay_page.dart
-
-        // ... داخل BlocListener
         listener: (context, state) async {
-          // <-- أضف async هنا
+          // Logic preserved exactly as requested
           switch (state.status) {
             case PaymentStatus.requiresAuth:
               if (state.authUrl != null) {
-                // 1. نذهب لصفحة الويب وننتظر النتيجة
                 final bool? webViewResult = await context.push<bool>(
                   '/payment-webview?url=${Uri.encodeComponent(state.authUrl!)}',
                 );
 
-                // 2. إذا عادت صفحة الويب بـ true، يعني أن المصادقة نجحت
                 if (webViewResult == true && context.mounted) {
-                  // نغلق صفحة الدفع ونعود لصفحة البروفايل بنجاح
                   context.pop(true);
                 }
               }
@@ -45,8 +46,6 @@ class PayPage extends StatelessWidget {
               final response = state.response!;
               if (response.isPaid) {
                 AppSnackbar.success(context, 'Payment Successful');
-
-                // إذا كان الدفع مباشراً بدون 3DS
                 if (context.canPop()) {
                   context.pop(true);
                 } else {
@@ -57,7 +56,6 @@ class PayPage extends StatelessWidget {
               }
               break;
 
-            // ... بقية الحالات
             case PaymentStatus.initial:
               // TODO: Handle this case.
               throw UnimplementedError();
@@ -71,24 +69,25 @@ class PayPage extends StatelessWidget {
         },
         //==================  Main Widget  ===================//
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               //==================  Payment amount  ===================//
-              payTitleWidget('199 SAR'), // Edit The Amount Here
-              const SizedBox(height: 16),
+              payTitleWidget('199 SAR'),
+              const SizedBox(height: 24),
 
               //==================  Credit Card Widget  ===================//
               creditCardWidget(context),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
               //==================  Card Details  ===================//
               buildSectionTitle('Card Details'),
 
               //==================  Card Input Form  ===================//
+              // Assuming this form uses the FormTextField we styled previously
               const CardInputForm(),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
 
               //==================  BlocBuilder for Pay Now Button  ===================//
               BlocBuilder<PaymentCubit, PaymentState>(
@@ -96,39 +95,55 @@ class PayPage extends StatelessWidget {
                   final isLoading = state.status == PaymentStatus.loading;
 
                   //==================  Pay Now Button  ===================//
-                  return ElevatedButton(
-                    onPressed: isLoading
-                        ? null
-                        : context.read<PaymentCubit>().submitPayment,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: const Color(0xFF1976D2),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: Colors.grey[800],
-                    ),
-                    child: isLoading
-                        //==================  Pay Now Button Loading  ===================//
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                  return SizedBox(
+                    height: 56, // Taller, more modern button
+                    child: ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : context.read<PaymentCubit>().submitPayment,
+                      style: ElevatedButton.styleFrom(
+                        // Dark Navy Brand Color
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          123,
+                          43,
+                          181,
+                        ),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        shadowColor: const Color.fromARGB(66, 24, 1, 74),
+                        disabledBackgroundColor: Colors.grey[400],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: isLoading
+                          //==================  Pay Now Button Loading  ===================//
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          // ==================  Pay Now Button Text  =================== //
+                          : const Text(
+                              'Pay Now',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                          )
-                        // ==================  Pay Now Button Text  =================== //
-                        : const Text(
-                            'Pay Now',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                    ),
                   );
                 },
               ),
+              // Extra padding at bottom for scrolling
+              const SizedBox(height: 20),
             ],
           ),
         ),

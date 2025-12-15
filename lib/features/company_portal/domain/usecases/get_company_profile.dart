@@ -3,7 +3,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/error/failures.dart';
-import '../entities/company_entity.dart';
+import '../../../shared/data/domain/entities/company_entity.dart';
 import '../repositories/company_portal_repository.dart';
 
 @injectable

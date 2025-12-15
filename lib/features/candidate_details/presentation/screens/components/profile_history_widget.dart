@@ -119,14 +119,10 @@ class ProfileHistoryWidget extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (edu.degreeType != null) Text(edu.degreeType!),
-            if (edu.fieldOfStudy != null)
-              Text(
-                edu.fieldOfStudy!,
-                style: TextStyle(color: Colors.grey[600]),
-              ),
+            Text(edu.degreeType),
+            Text(edu.fieldOfStudy, style: TextStyle(color: Colors.grey[600])),
             Text(
-              "${edu.startDate?.year ?? ''} - ${edu.endDate?.year ?? ''}",
+              "${edu.startDate.year ?? ''} - ${edu.endDate?.year ?? ''}",
               style: TextStyle(color: Colors.grey[500], fontSize: 12.sp),
             ),
           ],
@@ -160,16 +156,14 @@ class ProfileHistoryWidget extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (cert.issuingInstitution != null)
-              Text(
-                cert.issuingInstitution!,
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-            if (cert.issueDate != null)
-              Text(
-                "Issued: ${cert.issueDate!.year}",
-                style: TextStyle(color: Colors.grey[500], fontSize: 12.sp),
-              ),
+            Text(
+              cert.issuingInstitution,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            Text(
+              "Issued: ${cert.issueDate.year}",
+              style: TextStyle(color: Colors.grey[500], fontSize: 12.sp),
+            ),
           ],
         ),
       ),

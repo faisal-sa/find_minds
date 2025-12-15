@@ -25,5 +25,16 @@ abstract class AuthRepository {
     required String token,
   });
 
+  Future<Result<void, Failure>> resetPassword({required String email});
+
+  Future<Result<void, Failure>> sendPasswordResetOTP({required String email});
+
+  Future<Result<User, Failure>> verifyPasswordResetOTP({
+    required String email,
+    required String token,
+  });
+
+  Future<Result<User, Failure>> updatePassword({required String newPassword});
+
   Future<Result<User?, Failure>> getCurrentUser();
 }

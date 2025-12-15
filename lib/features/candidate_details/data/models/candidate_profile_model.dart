@@ -15,7 +15,7 @@ part 'candidate_profile_model.mapper.dart';
       GenerateMethods.encode |
       GenerateMethods.stringify,
 )
-class CandidateProfileModel extends CandidateProfileEntity {
+class CandidateProfileModel extends CandidateProfileEntity with CandidateProfileModelMappable {
   @override
   @MappableField(key: 'work_experiences')
   final List<WorkExperienceModel> experiences;
@@ -37,6 +37,10 @@ class CandidateProfileModel extends CandidateProfileEntity {
     super.avatarUrl,
     super.location,
     super.introVideoUrl,
+
+    // ✅ 1. إضافة تمرير cvUrl هنا
+    super.cvUrl,
+
     super.employmentTypes = const [],
     required super.skills,
     super.canRelocate = false,
@@ -55,7 +59,7 @@ class CandidateProfileModel extends CandidateProfileEntity {
     required this.educations,
     required this.certifications,
     required super.isUnlocked,
-    super.isBookmarked = false, // <---
+    super.isBookmarked = false,
   }) : super(
          experiences: experiences,
          educations: educations,
@@ -69,28 +73,35 @@ class CandidateProfileModel extends CandidateProfileEntity {
   ) {
     final sensitiveJson = Map<String, dynamic>.from(json);
 
-    if (sensitiveJson['first_name'] == null)
+    if (sensitiveJson['first_name'] == null) {
       sensitiveJson['first_name'] = "Unknown";
+    }
     if (sensitiveJson['last_name'] == null) sensitiveJson['last_name'] = "";
-    if (sensitiveJson['job_title'] == null)
+    if (sensitiveJson['job_title'] == null) {
       sensitiveJson['job_title'] = "Open to Work";
+    }
 
     if (!isUnlocked) {
       sensitiveJson['email'] = null;
       sensitiveJson['phone_number'] = null;
+      sensitiveJson['cv_url'] = null;
     }
 
-    if (sensitiveJson['work_experiences'] == null)
+    if (sensitiveJson['work_experiences'] == null) {
       sensitiveJson['work_experiences'] = [];
+    }
     if (sensitiveJson['educations'] == null) sensitiveJson['educations'] = [];
-    if (sensitiveJson['certifications'] == null)
+    if (sensitiveJson['certifications'] == null) {
       sensitiveJson['certifications'] = [];
-    if (sensitiveJson['employment_types'] == null)
+    }
+    if (sensitiveJson['employment_types'] == null) {
       sensitiveJson['employment_types'] = [];
+    }
     if (sensitiveJson['skills'] == null) sensitiveJson['skills'] = [];
     if (sensitiveJson['languages'] == null) sensitiveJson['languages'] = [];
-    if (sensitiveJson['target_roles'] == null)
+    if (sensitiveJson['target_roles'] == null) {
       sensitiveJson['target_roles'] = [];
+    }
     if (sensitiveJson['work_modes'] == null) sensitiveJson['work_modes'] = [];
 
     sensitiveJson['is_unlocked'] = isUnlocked;

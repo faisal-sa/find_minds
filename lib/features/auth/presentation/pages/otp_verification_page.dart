@@ -34,6 +34,14 @@ class OTPVerificationPage extends StatelessWidget {
       },
       builder: (context, state) {
         return Scaffold(
+          appBar: AppBar(
+            title: const Text('Verify OTP'),
+            backgroundColor: Colors.blue,
+            leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ),
           body: Container(
             color: Colors.white,
             child: SafeArea(
@@ -77,12 +85,12 @@ class OTPVerificationPage extends StatelessWidget {
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.blue),
                             ),
-                            hintStyle:  TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
 
-                            fontWeight: FontWeight.w300,
-                          ),
+                              fontWeight: FontWeight.w300,
+                            ),
                             hintText: 'Enter 6-digit code',
                           ),
 

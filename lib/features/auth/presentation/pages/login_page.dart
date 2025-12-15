@@ -20,7 +20,6 @@ class LoginPage extends StatelessWidget {
 
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-
         if (state is AuthAuthenticated) {
           if (serviceLocator
                   .get<SupabaseClient>()
@@ -31,7 +30,7 @@ class LoginPage extends StatelessWidget {
             context.go('/company/onboarding-router');
           } else {
             serviceLocator.get<UserCubit>().fetchUserProfile();
-            context.go('/insights'); 
+            context.go('/insights');
           }
         }
       },
@@ -149,6 +148,14 @@ class LoginPage extends StatelessWidget {
                           onPressed: () => context.push('/signup'),
                           child: const Text(
                             'Don\'t have an account? Sign up',
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+
+                        TextButton(
+                          onPressed: () => context.push('/reset-password'),
+                          child: const Text(
+                            'Forgot your password? Reset it',
                             style: TextStyle(color: Colors.blue),
                           ),
                         ),

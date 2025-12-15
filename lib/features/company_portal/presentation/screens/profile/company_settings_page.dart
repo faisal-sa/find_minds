@@ -45,42 +45,12 @@ class CompanySettingsPage extends StatelessWidget {
                         onTap: () =>
                             context.pushNamed('company-complete-profile'),
                       ),
-                      _SettingsTile(
-                        icon: Icons.people_outline_rounded,
-                        iconColor: Colors.purpleAccent,
-                        title: 'Team Members',
-                        subtitle: 'Manage access and roles',
-                        onTap: () {
-                          // Navigate to team management
-                        },
-                        showDivider:
-                            false, // Last item in group needs no divider
-                      ),
                     ],
                   ),
 
                   const SizedBox(height: 24),
 
                   _SectionHeader(title: 'Security & Account'),
-                  _SettingsGroup(
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.lock_outline_rounded,
-                        iconColor: Colors.orangeAccent,
-                        title: 'Password & Security',
-                        onTap: () {
-                          // Navigate to change password
-                        },
-                      ),
-                      _SettingsTile(
-                        icon: Icons.notifications_none_rounded,
-                        iconColor: Colors.teal,
-                        title: 'Notifications',
-                        onTap: () {},
-                        showDivider: false,
-                      ),
-                    ],
-                  ),
 
                   const SizedBox(height: 24),
 

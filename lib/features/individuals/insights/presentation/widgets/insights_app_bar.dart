@@ -37,7 +37,7 @@ class InsightsAppBar extends StatelessWidget implements PreferredSizeWidget {
             onPressed: () {
           
               serviceLocator.get<AuthCubit>().signOut.call(NoParams());
-              context.go("/");
+              context.go("/login");
             },
             icon: Icon(Icons.exit_to_app, size: 24.r),
           ),

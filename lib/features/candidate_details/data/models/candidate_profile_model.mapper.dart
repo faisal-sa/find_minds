@@ -72,6 +72,13 @@ class CandidateProfileModelMapper
     key: r'intro_video_url',
     opt: true,
   );
+  static String? _$cvUrl(CandidateProfileModel v) => v.cvUrl;
+  static const Field<CandidateProfileModel, String> _f$cvUrl = Field(
+    'cvUrl',
+    _$cvUrl,
+    key: r'cv_url',
+    opt: true,
+  );
   static List<String> _$employmentTypes(CandidateProfileModel v) =>
       v.employmentTypes;
   static const Field<CandidateProfileModel, List<String>> _f$employmentTypes =
@@ -220,6 +227,7 @@ class CandidateProfileModelMapper
     #avatarUrl: _f$avatarUrl,
     #location: _f$location,
     #introVideoUrl: _f$introVideoUrl,
+    #cvUrl: _f$cvUrl,
     #employmentTypes: _f$employmentTypes,
     #skills: _f$skills,
     #canRelocate: _f$canRelocate,
@@ -251,6 +259,7 @@ class CandidateProfileModelMapper
       avatarUrl: data.dec(_f$avatarUrl),
       location: data.dec(_f$location),
       introVideoUrl: data.dec(_f$introVideoUrl),
+      cvUrl: data.dec(_f$cvUrl),
       employmentTypes: data.dec(_f$employmentTypes),
       skills: data.dec(_f$skills),
       canRelocate: data.dec(_f$canRelocate),

@@ -30,42 +30,6 @@ class UpdateCompanyProfileEvent extends CompanyEvent {
   List<Object> get props => [company];
 }
 
-class SearchCandidatesEvent extends CompanyEvent {
-  final String? location;
-  final List<String>? skills;
-  final List<String>? employmentTypes;
-  final bool? canRelocate;
-  final List<String>? languages;
-  final List<String>? workModes;
-  final String? jobTitle;
-  final List<String>? targetRoles;
-
-  const SearchCandidatesEvent({
-    this.location,
-    this.skills,
-    this.employmentTypes,
-    this.canRelocate,
-    this.languages,
-    this.workModes,
-    this.jobTitle,
-    this.targetRoles,
-  });
-}
-
-class AddCandidateBookmarkEvent extends CompanyEvent {
-  final String candidateId;
-  const AddCandidateBookmarkEvent(this.candidateId);
-  @override
-  List<Object?> get props => [candidateId];
-}
-
-class GetCompanyBookmarksEvent extends CompanyEvent {
-  final String companyId;
-  const GetCompanyBookmarksEvent(this.companyId);
-  @override
-  List<Object?> get props => [companyId];
-}
-
 class CheckCompanyStatusEvent extends CompanyEvent {
   final String userId;
   const CheckCompanyStatusEvent(this.userId);
@@ -78,11 +42,4 @@ class VerifyCompanyQREvent extends CompanyEvent {
   const VerifyCompanyQREvent(this.qrCodeData);
   @override
   List<Object?> get props => [qrCodeData];
-}
-
-class RemoveCandidateBookmarkEvent extends CompanyEvent {
-  final String candidateId;
-  const RemoveCandidateBookmarkEvent(this.candidateId);
-  @override
-  List<Object?> get props => [candidateId];
 }

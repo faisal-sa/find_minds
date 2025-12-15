@@ -1,14 +1,18 @@
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/features/CRinfo/presentation/cubit/cr_info_cubit.dart';
+import 'package:graduation_project/features/auth/presentation/pages/new_password_page.dart';
+import 'package:graduation_project/features/auth/presentation/pages/rest_passord_page.dart';
 import 'package:graduation_project/features/candidate_details/presentation/screens/candidate_profile_page.dart';
+import 'package:graduation_project/features/company_bookmarks/presentation/blocs/bloc/bookmarks_bloc.dart';
+import 'package:graduation_project/features/company_bookmarks/presentation/screens/company_bookmarks_page.dart';
+import 'package:graduation_project/features/company_portal/presentation/screens/complete_company_profile_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/onboarding/company_onboarding_router_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/onboarding/company_qr_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/profile/company_bookmarks_page.dart';
 import 'package:graduation_project/features/company_portal/presentation/screens/profile/company_settings_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/profile/complete_company_profile_page.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/search/CandidateResultsPage.dart';
-import 'package:graduation_project/features/company_portal/presentation/screens/search/company_search_page.dart';
+import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
+import 'package:graduation_project/features/company_search/presentation/screens/candidate_results_page.dart';
+import 'package:graduation_project/features/company_search/presentation/screens/company_search_page.dart';
 import 'package:graduation_project/features/individuals/AI_quiz/pages/ai_skill_check_page.dart';
 import 'package:graduation_project/features/individuals/profile/routes/job_preferences/presentation/cubit/job_preferences_cubit.dart';
 import 'package:graduation_project/features/individuals/profile/routes/skills_languages/presentation/cubit/skills_languages_cubit.dart';
@@ -29,6 +33,14 @@ final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: [
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => ResetPasswordPage(),
+    ),
+    GoRoute(
+      path: '/new-password',
+      builder: (context, state) => const NewPasswordPage(),
+    ),
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/intro', builder: (context, state) => const IntroPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
@@ -317,8 +329,6 @@ GoRoute(
       ],
     ),
     // -------------------- COMPANY PORTAL FLOW --------------------
-
-    // 1. THE ROUTER: Checks the status after successful login/signup
     GoRoute(
       path: '/company/onboarding-router',
       name: 'company-onboarding-router',
@@ -328,7 +338,6 @@ GoRoute(
       ),
     ),
 
-    // 2. ONBOARDING STEP 1: Profile Completion (if profile is incomplete)
     GoRoute(
       path: '/company/complete-profile',
       name: 'company-complete-profile',
@@ -338,7 +347,6 @@ GoRoute(
       ),
     ),
 
-    // 3. ONBOARDING STEP 2: Payment/Verification (if profile is complete but unverified/unpaid)
     GoRoute(
       path: '/company/payment',
       name: 'company-payment',
@@ -354,36 +362,44 @@ GoRoute(
       path: '/company/search',
       name: 'company-search',
       builder: (context, state) => BlocProvider(
-        create: (_) => getIt<CompanyBloc>(),
-        child: CompanySearchPage(),
+        create: (_) => getIt<SearchBloc>(),
+        child: const CompanySearchPage(),
       ),
       routes: [
-        // 4a. PROFILE COMPLETION (Mandatory) - First step after login
+        // 4a. SEARCH RESULTS
         GoRoute(
           path: 'search-results',
           name: 'company-search-results',
           builder: (context, state) {
-            final bloc = state.extra as CompanyBloc;
-            return BlocProvider.value(
-              value: bloc,
+            final searchBloc = state.extra as SearchBloc;
+
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider.value(value: searchBloc),
+                BlocProvider(create: (_) => getIt<BookmarksBloc>()),
+              ],
               child: const CandidateResultsPage(),
             );
           },
         ),
+
         GoRoute(
-          path: 'candidate-details/:id', // نمرر الـ ID في الرابط
+          path: 'candidate-details/:id',
           name: 'candidate-details',
           builder: (context, state) {
             final candidateId = state.pathParameters['id']!;
-            // نستدعي الصفحة التي بنيناها في الخطوات السابقة
-            return CandidateProfilePage(candidateId: candidateId);
+            return BlocProvider(
+              create: (_) => getIt<BookmarksBloc>(),
+              child: CandidateProfilePage(candidateId: candidateId),
+            );
           },
         ),
+
         GoRoute(
           path: 'bookmarks',
           name: 'company-bookmarks',
           builder: (context, state) => BlocProvider(
-            create: (_) => getIt<CompanyBloc>(),
+            create: (_) => getIt<BookmarksBloc>(),
             child: const CompanyBookmarksPage(),
           ),
         ),
@@ -396,12 +412,20 @@ GoRoute(
             child: const CompanyQRScannerPage(),
           ),
         ),
+
         GoRoute(
           path: 'settings',
           name: 'company-settings',
           builder: (context, state) => const CompanySettingsPage(),
         ),
+        GoRoute(
+          path: '/company/verify-cr',
+          name: 'verify-cr',
+          builder: (context, state) => const CrInfoPage(),
+        ),
       ],
     ),
+    //▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲ ROUTE END ▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼
+    //
   ],
 );

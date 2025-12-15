@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:graduation_project/core/simple_video_player.dart';
 import 'package:graduation_project/features/candidate_details/domain/entities/candidate_profile_entity.dart';
 
 class ProfileSummaryWidget extends StatelessWidget {
@@ -13,14 +14,12 @@ class ProfileSummaryWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // الفيديو
         if (profile.introVideoUrl != null &&
             profile.introVideoUrl!.isNotEmpty) ...[
-          _buildVideoSection(profile.introVideoUrl!),
+          InlineVideoPlayer(videoUrl: profile.introVideoUrl!),
           Gap(20.h),
         ],
 
-        // نبذة عني
         if (profile.aboutMe != null && profile.aboutMe!.isNotEmpty) ...[
           _buildSectionTitle("About Me"),
           Gap(8.h),
@@ -35,7 +34,7 @@ class ProfileSummaryWidget extends StatelessWidget {
           Gap(20.h),
         ],
 
-        // تفضيلات العمل
+        // 3. تفضيلات العمل
         _buildSectionTitle("Work Preferences"),
         Gap(10.h),
         Wrap(
@@ -66,7 +65,7 @@ class ProfileSummaryWidget extends StatelessWidget {
         ),
         Gap(20.h),
 
-        // اللغات
+        // 4. اللغات
         if (profile.languages.isNotEmpty) ...[
           _buildSectionTitle("Languages"),
           Gap(8.h),
@@ -79,7 +78,7 @@ class ProfileSummaryWidget extends StatelessWidget {
           Gap(20.h),
         ],
 
-        // المهارات
+        // 5. المهارات
         if (profile.skills.isNotEmpty) ...[
           _buildSectionTitle("Skills"),
           Gap(8.h),
@@ -95,7 +94,7 @@ class ProfileSummaryWidget extends StatelessWidget {
           Gap(20.h),
         ],
 
-        // الراتب
+        // 6. الراتب
         if (profile.minSalary != null || profile.maxSalary != null) ...[
           Container(
             padding: EdgeInsets.all(12.r),
@@ -126,36 +125,6 @@ class ProfileSummaryWidget extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _buildVideoSection(String url) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        children: [
-          Icon(Icons.play_circle_fill, color: Colors.white, size: 50.sp),
-          Gap(10.h),
-          Text(
-            "Watch Intro Video",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Gap(5.h),
-          Text(
-            "Click to open video",
-            style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-          ),
-        ],
-      ),
     );
   }
 

@@ -19,6 +19,17 @@ abstract class AuthRemoteDataSource {
 
   Future<UserModel> verifyOTP({required String email, required String token});
 
+  Future<void> resetPassword({required String email});
+
+  Future<void> sendPasswordResetOTP({required String email});
+
+  Future<UserModel> verifyPasswordResetOTP({
+    required String email,
+    required String token,
+  });
+
+  Future<UserModel> updatePassword({required String newPassword});
+
   Future<UserModel?> getCurrentUser();
 }
 
@@ -99,6 +110,46 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> resetPassword({required String email}) async {
+    await _supabase.auth.resetPasswordForEmail(email);
+  }
+
+  @override
+  Future<void> sendPasswordResetOTP({required String email}) async {
+    // For password recovery, Supabase sends OTP via resetPasswordForEmail
+    // The OTP can then be verified using verifyOTP with OtpType.recovery
+    await _supabase.auth.resetPasswordForEmail(email);
+  }
+
+  @override
+  Future<UserModel> verifyPasswordResetOTP({
+    required String email,
+    required String token,
+  }) async {
+    final response = await _supabase.auth.verifyOTP(
+      email: email,
+      token: token,
+      type: OtpType.recovery,
+    );
+
+    if (response.user == null) {
+      throw Exception('Password reset OTP verification failed: User is null');
+    }
+    final userMetadata = response.user!.userMetadata;
+    final appMetadata = response.user!.appMetadata;
+    final role =
+        (userMetadata?['role'] ?? appMetadata['role']) as String? ??
+        'Individual';
+
+    return UserModel(
+      id: response.user!.id,
+      email: response.user!.email ?? email,
+      phone: response.user!.phone,
+      role: role,
+    );
+  }
+
+  @override
   Future<UserModel> verifyOTP({
     required String email,
     required String token,
@@ -121,6 +172,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return UserModel(
       id: response.user!.id,
       email: response.user!.email ?? email,
+      phone: response.user!.phone,
+      role: role,
+    );
+  }
+
+  @override
+  Future<UserModel> updatePassword({required String newPassword}) async {
+    final response = await _supabase.auth.updateUser(
+      UserAttributes(password: newPassword),
+    );
+
+    if (response.user == null) {
+      throw Exception('Password update failed: User is null');
+    }
+
+    final userMetadata = response.user!.userMetadata;
+    final appMetadata = response.user!.appMetadata;
+    final role =
+        (userMetadata?['role'] ?? appMetadata['role']) as String? ??
+        'Individual';
+
+    return UserModel(
+      id: response.user!.id,
+      email: response.user!.email ?? '',
       phone: response.user!.phone,
       role: role,
     );

@@ -25,7 +25,6 @@ class CandidateRemoteDataSourceImpl implements CandidateRemoteDataSource {
     String companyId,
   ) async {
     try {
-      // 1. التحقق: هل حساب الشركة Premium؟
       final companyData = await _supabase
           .from('companies')
           .select('is_premium')
@@ -33,7 +32,6 @@ class CandidateRemoteDataSourceImpl implements CandidateRemoteDataSource {
           .single();
       final bool isPremium = companyData['is_premium'] ?? false;
 
-      // 2. التحقق: هل المرشح في المفضلة؟
       final bookmarkRes = await _supabase
           .from('company_bookmarks') // اسم جدول المفضلة لديك
           .select('id')
@@ -92,7 +90,6 @@ class CandidateRemoteDataSourceImpl implements CandidateRemoteDataSource {
 
   @override
   Future<void> unlockCompanyAccess(String companyId) async {
-    // ترقية الحساب
     await _supabase
         .from('companies')
         .update({'is_premium': true})

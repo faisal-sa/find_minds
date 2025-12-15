@@ -16,6 +16,7 @@ class WorkExperienceModel extends WorkExperienceEntity
     super.endDate,
     @MappableField(key: 'is_currently_working')
     required super.isCurrentlyWorking,
-    @MappableField(key: 'responsibilities') super.description,
+    @MappableField(key: 'responsibilities')
+    super.description, // Mapping custom keys
   });
 }

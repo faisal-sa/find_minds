@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:graduation_project/features/candidate_details/domain/repositories/candidate_details_repository.dart';
 import 'package:injectable/injectable.dart';
-import '../../../../core/error/failures.dart'; // تأكد من مسار الـ Failure لديك
+import '../../../../core/error/failures.dart';
 
 @injectable
 class UnlockCandidateUseCase {
