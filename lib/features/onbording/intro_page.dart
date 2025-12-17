@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:graduation_project/core/exports/app_exports.dart';
 import 'package:graduation_project/features/onbording/intro_text.dart';
 
