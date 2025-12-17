@@ -7,12 +7,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graduation_project/core/di/service_locator.dart';
 import 'package:graduation_project/core/services/gemini_service.dart';
+import 'package:graduation_project/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:graduation_project/features/company_search/presentation/blocs/bloc/search_bloc.dart';
 import 'package:graduation_project/features/company_search/presentation/screens/widgets/ai_processing_dialog.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SmartSearchPage extends StatefulWidget {
   const SmartSearchPage({super.key});
@@ -99,6 +102,17 @@ class _SmartSearchPageState extends State<SmartSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<AuthCubit>().signOutUser();
+            },
+            icon: Icon(Icons.exit_to_app, size: 24.r),
+          ),
+        ],
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
