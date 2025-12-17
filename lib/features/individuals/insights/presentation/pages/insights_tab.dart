@@ -330,7 +330,7 @@ class _ResumeUploadButton extends StatelessWidget {
                             "+100%",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 10.sp,
+                              fontSize: 10.spMin,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

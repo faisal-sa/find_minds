@@ -538,15 +538,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i758.SkillsLanguagesCubit>(
       () => _i758.SkillsLanguagesCubit(gh<_i736.SkillsLanguagesRepository>()),
     );
-    gh.lazySingleton<_i792.UserCubit>(
-      () => _i792.UserCubit(
-        gh<_i188.GetCachedUser>(),
-        gh<_i736.CacheUser>(),
-        gh<_i54.FetchUserProfile>(),
-        gh<_i188.ParseResumeWithAI>(),
-        gh<_i454.SupabaseClient>(),
-      ),
-    );
     gh.factory<_i111.GetCurrentUser>(
       () => _i111.GetCurrentUser(gh<_i787.AuthRepository>()),
     );
@@ -575,6 +566,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i513.PaymentCubit>(
       () => _i513.PaymentCubit(gh<_i903.ProcessPaymentUseCase>()),
     );
+    gh.lazySingleton<_i792.UserCubit>(
+      () => _i792.UserCubit(
+        gh<_i188.GetCachedUser>(),
+        gh<_i736.CacheUser>(),
+        gh<_i54.FetchUserProfile>(),
+        gh<_i188.ParseResumeWithAI>(),
+        gh<_i454.SupabaseClient>(),
+        gh<_i939.UpdateUser>(),
+      ),
+    );
     gh.factory<_i661.AboutMeCubit>(
       () => _i661.AboutMeCubit(
         gh<_i689.SaveAboutMeUseCase>(),
@@ -595,21 +596,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i170.BasicInfoCubit>(
       () => _i170.BasicInfoCubit(gh<_i700.SaveBasicInfoUseCase>()),
     );
-    gh.factory<_i117.AuthCubit>(
-      () => _i117.AuthCubit(
-        signUp: gh<_i190.SignUp>(),
-        login: gh<_i428.Login>(),
-        signOut: gh<_i568.SignOut>(),
-        getCurrentUser: gh<_i111.GetCurrentUser>(),
-        sendOTP: gh<_i727.SendOTP>(),
-        resendOTP: gh<_i152.ResendOTP>(),
-        verifyOTP: gh<_i975.VerifyOTP>(),
-        resetPasswordOTP: gh<_i1066.ResetPassword>(),
-        sendPasswordResetOTP: gh<_i665.SendPasswordResetOTP>(),
-        verifyPasswordResetOTP: gh<_i500.VerifyPasswordResetOTP>(),
-        updatePassword: gh<_i455.UpdatePassword>(),
-      ),
-    );
     gh.factory<_i916.BookmarksBloc>(
       () => _i916.BookmarksBloc(
         gh<_i814.GetBookmarksUseCase>(),
@@ -623,6 +609,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i989.DeleteWorkExperienceUseCase>(),
         gh<_i718.AddWorkExperienceUseCase>(),
         gh<_i1033.UpdateWorkExperienceUseCase>(),
+      ),
+    );
+    gh.factory<_i117.AuthCubit>(
+      () => _i117.AuthCubit(
+        signUp: gh<_i190.SignUp>(),
+        login: gh<_i428.Login>(),
+        signOut: gh<_i568.SignOut>(),
+        getCurrentUser: gh<_i111.GetCurrentUser>(),
+        sendOTP: gh<_i727.SendOTP>(),
+        resendOTP: gh<_i152.ResendOTP>(),
+        verifyOTP: gh<_i975.VerifyOTP>(),
+        resetPasswordOTP: gh<_i1066.ResetPassword>(),
+        sendPasswordResetOTP: gh<_i665.SendPasswordResetOTP>(),
+        verifyPasswordResetOTP: gh<_i500.VerifyPasswordResetOTP>(),
+        updatePassword: gh<_i455.UpdatePassword>(),
+        getCrInfo: gh<_i333.GetCrInfo>(),
       ),
     );
     return this;

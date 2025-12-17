@@ -32,6 +32,7 @@ final GoRouter router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
   routes: [
+    GoRoute(path: '/auth', builder: (context, state) => const AuthHead()),
     GoRoute(
       path: '/reset-password',
       builder: (context, state) => ResetPasswordPage(),
@@ -42,8 +43,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/intro', builder: (context, state) => const IntroPage()),
-    GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+
     GoRoute(
       path: '/otp-verification',
       builder: (context, state) {

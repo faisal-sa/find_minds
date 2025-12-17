@@ -93,20 +93,25 @@ class ProfileSummaryWidget extends StatelessWidget {
 
         if (profile.minSalary != null || profile.maxSalary != null) ...[
           Container(
+            width: double.infinity,
             padding: EdgeInsets.all(12.r),
             decoration: BoxDecoration(
               color: Colors.green.withAlpha(13),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.attach_money, color: Colors.green),
                 Gap(8.w),
-                Text(
-                  "Salary Expectation: ${profile.minSalary ?? 0} - ${profile.maxSalary ?? 'Any'} ${profile.salaryCurrency ?? 'USD'}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                Expanded(
+                  child: Text(
+                    "Salary Expectation: ${profile.minSalary ?? 0} - ${profile.maxSalary ?? 'Any'} ${profile.salaryCurrency ?? 'USD'}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                    softWrap: true,
                   ),
                 ),
               ],

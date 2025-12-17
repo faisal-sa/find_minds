@@ -44,11 +44,12 @@ class CandidateProfilePage extends StatelessWidget {
         throw 'Could not launch $url';
       }
     } catch (e) {
-      if(context.mounted){
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Could not open CV: $e")));
-      }}
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Could not open CV: $e")));
+      }
+    }
   }
 
   @override
@@ -111,7 +112,7 @@ class CandidateProfilePage extends StatelessWidget {
                                 ? Icons.bookmark
                                 : Icons.bookmark_border,
                             color: profile.isBookmarked
-                                ? Colors.purple
+                                ? Colors.blue
                                 : Colors.grey,
                           ),
                           onPressed: () {

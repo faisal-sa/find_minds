@@ -184,6 +184,7 @@ class WathqService {
       }
     } on DioException catch (e) {
       if (e.response != null) {
+        // Server responded with error status code
         final statusCode = e.response?.statusCode;
         final errorMessage =
             e.response?.data?['message'] ??

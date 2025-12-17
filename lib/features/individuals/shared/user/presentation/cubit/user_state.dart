@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/user_entity.dart';
-
 class UserState extends Equatable {
   final UserEntity user;
   final bool isResumeLoading;
@@ -12,32 +11,31 @@ class UserState extends Equatable {
     this.resumeError,
   });
 
+  
   double get profileCompletion {
-    int total = 0;
-    int filled = 0;
+    double score = 0.0;
+    double maxScore = 100.0;
 
-    void checkString(String? val) {
-      total++;
-      if (val != null && val.isNotEmpty) filled++;
-    }
+    // Basic Info (30 points)
+    if (user.firstName.isNotEmpty && user.lastName.isNotEmpty) score += 10;
+    if (user.email.isNotEmpty) score += 5;
+    if (user.phoneNumber.isNotEmpty) score += 5;
+    if (user.jobTitle.isNotEmpty) score += 5;
+    if (user.location.isNotEmpty) score += 5;
 
-    void checkList(List? list) {
-      total++;
-      if (list != null && list.isNotEmpty) filled++;
-    }
+    // Content (40 points)
+    if (user.summary.isNotEmpty) score += 10;
+    if (user.avatarUrl != null && user.avatarUrl!.isNotEmpty) score += 5;
+    if (user.videoUrl != null && user.videoUrl!.isNotEmpty) score += 5;
+    if (user.skills.isNotEmpty) score += 10;
+    if (user.languages.isNotEmpty) score += 10;
 
-    checkString(user.firstName);
-    checkString(user.lastName);
-    checkString(user.jobTitle);
-    checkString(user.location);
-    checkString(user.email);
-    checkString(user.phoneNumber);
-    checkString(user.summary);
-    checkString(user.avatarUrl); 
-    checkList(user.workExperiences);
-    checkList(user.educations);
+    // Experience & Education (30 points)
+    if (user.workExperiences.isNotEmpty) score += 15;
+    if (user.educations.isNotEmpty) score += 15;
 
-    return total == 0 ? 0.0 : (filled / total);
+    // Cap at 1.0 (100%)
+    return (score / maxScore).clamp(0.0, 1.0);
   }
 
   UserState copyWith({

@@ -183,8 +183,6 @@ class _CompleteCompanyProfilePageState
             return const Center(child: CircularProgressIndicator());
           }
 
-         
-
           return CustomScrollView(
             slivers: [
               SliverAppBar.medium(
@@ -363,7 +361,7 @@ class _CompleteCompanyProfilePageState
                       _saveProfile(company);
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
+                backgroundColor: Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 elevation: 0,

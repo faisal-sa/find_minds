@@ -11,6 +11,7 @@ import 'package:graduation_project/features/individuals/shared/user/domain/useca
 import 'package:graduation_project/features/individuals/shared/user/domain/usecases/fetch_user_profile.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/usecases/get_cached_user.dart';
 import 'package:graduation_project/features/individuals/shared/user/domain/usecases/parse_resume_with_ai.dart';
+import 'package:graduation_project/features/individuals/shared/user/domain/usecases/update_user.dart';
 import 'package:graduation_project/features/individuals/shared/user/presentation/cubit/user_state.dart';
 import 'package:injectable/injectable.dart';
 import 'package:bloc/bloc.dart';
@@ -23,6 +24,7 @@ class UserCubit extends Cubit<UserState> {
   final CacheUser _cacheUser;
   final FetchUserProfile _fetchUserProfile;
   final ParseResumeWithAI _parseResumeWithAI;
+  final UpdateUser _updateUser;
   
   final SupabaseClient _supabaseClient; 
   bool _isLoadingFromStorage = false;
@@ -34,6 +36,7 @@ class UserCubit extends Cubit<UserState> {
     this._fetchUserProfile,
     this._parseResumeWithAI,
     this._supabaseClient,
+    this._updateUser
   ) : super(const UserState()) {
     _loadUserFromStorage();
   }
@@ -224,7 +227,7 @@ class UserCubit extends Cubit<UserState> {
   }
 
   
-  Future<void> uploadAndExtractResume() async {
+ Future<void> uploadAndExtractResume() async {
     try {
       emit(state.copyWith(isResumeLoading: true, resumeError: null));
 
@@ -254,19 +257,41 @@ class UserCubit extends Cubit<UserState> {
         return;
       }
 
+      // 1. Extract Data via AI
       final extractedUser = await _parseResumeWithAI(fileBytes);
 
+      // 2. Merge with existing user data
+      // Note: We use Set to avoid exact string duplicates in Skills/Languages
+      // For Lists (Work/Edu), we append. 
       final updatedUser = state.user.copyWith(
         firstName: extractedUser.firstName.isNotEmpty ? extractedUser.firstName : state.user.firstName,
         lastName: extractedUser.lastName.isNotEmpty ? extractedUser.lastName : state.user.lastName,
         email: extractedUser.email.isNotEmpty ? extractedUser.email : state.user.email,
         phoneNumber: extractedUser.phoneNumber.isNotEmpty ? extractedUser.phoneNumber : state.user.phoneNumber,
+        jobTitle: extractedUser.jobTitle.isNotEmpty ? extractedUser.jobTitle : state.user.jobTitle,
+        location: extractedUser.location.isNotEmpty ? extractedUser.location : state.user.location,
         summary: extractedUser.summary.isNotEmpty ? extractedUser.summary : state.user.summary,
+        
+        // Append lists
+        workExperiences: [...state.user.workExperiences, ...extractedUser.workExperiences],
+        educations: [...state.user.educations, ...extractedUser.educations],
+        certifications: [...state.user.certifications, ...extractedUser.certifications],
+        
+        // Merge and Deduplicate basic strings
+        skills: {...state.user.skills, ...extractedUser.skills}.toList(),
+        languages: {...state.user.languages, ...extractedUser.languages}.toList(),
       );
 
+      // 3. Update State
       emit(state.copyWith(user: updatedUser, isResumeLoading: false));
       
+      // 4. Update Supabase
+      debugPrint("Auto-saving extracted resume data to Supabase...");
+      await _updateUser(updatedUser);
+      debugPrint("Supabase update complete.");
+      
     } catch (e) {
+      debugPrint("Resume upload error: $e");
       emit(state.copyWith(
         isResumeLoading: false,
         resumeError: 'Failed to process resume: $e',

@@ -33,9 +33,10 @@ class ContactSectionWidget extends StatelessWidget {
               children: [
                 const Icon(Icons.verified, color: Colors.green),
                 Gap(8.w),
-                const Text(
+                Text(
                   "Premium Access Active",
                   style: TextStyle(
+                    fontSize: 14.spMin,
                     color: Colors.green,
                     fontWeight: FontWeight.bold,
                   ),

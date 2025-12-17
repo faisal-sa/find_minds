@@ -26,11 +26,12 @@ class _CompanyOnboardingRouterPageState
   void _checkInitialAuthStatus(BuildContext context) {
     final authState = context.read<AuthCubit>().state;
 
-    if (authState is AuthAuthenticated) {
+    if (authState.status == AuthStatus.authenticated &&
+        authState.userId != null) {
       context.read<CompanyBloc>().add(
-        CheckCompanyStatusEvent(authState.userId),
+        CheckCompanyStatusEvent(authState.userId!),
       );
-    } else if (authState is! AuthLoading) {
+    } else if (authState.status != AuthStatus.loading) {
       context.go('/login');
     }
   }
@@ -39,7 +40,8 @@ class _CompanyOnboardingRouterPageState
     if (!state.hasProfile) {
       context.go('/company/complete-profile');
     }
-
+    // }
+    // ---------------------------
     else {
       context.go('/company/search');
     }
@@ -51,11 +53,12 @@ class _CompanyOnboardingRouterPageState
       listeners: [
         BlocListener<AuthCubit, AuthState>(
           listener: (context, authState) {
-            if (authState is AuthAuthenticated) {
+            if (authState.status == AuthStatus.authenticated &&
+                authState.userId != null) {
               context.read<CompanyBloc>().add(
-                CheckCompanyStatusEvent(authState.userId),
+                CheckCompanyStatusEvent(authState.userId!),
               );
-            } else if (authState is AuthUnauthenticated) {
+            } else if (authState.status == AuthStatus.unauthenticated) {
               context.go('/login');
             }
           },
